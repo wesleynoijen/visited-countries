@@ -46,16 +46,11 @@ export const people = [
   {
     name: 'Wesley',
     color: COLORS.blue,
-    countries: ['NL', 'BE', 'DE', 'FR', 'ES', 'IT', 'GB', 'US', 'JP', 'TH', 'AU'],
+    countries: ['NL', 'BE', 'BG', 'AE', 'DE', 'FR', 'ES', 'PL', 'ES', 'ES', 'CZ', 'TR', 'GR'],
   },
   {
-    name: 'Sofia',
-    color: COLORS.pink,
-    countries: ['NL', 'FR', 'ES', 'PT', 'GR', 'MA', 'US', 'MX', 'JP'],
-  },
-  {
-    name: 'Lars',
+    name: 'Madelon',
     color: COLORS.green,
-    countries: ['NL', 'FR', 'DE', 'NO', 'SE', 'IS', 'FI', 'US'],
+    countries: ['NL'],
   },
 ];

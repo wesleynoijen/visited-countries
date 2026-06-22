@@ -7,7 +7,7 @@ stripes of every visitor's colour.
 
 It's a **static site** — no database, no backend, no build step. All data lives
 in code, so the only way to change anything is to edit a file and push. Perfect
-for GitHub Pages.
+for GitHub Pages!
 
 - 🗺️ Interactive [Leaflet](https://leafletjs.com/) map on a clean CARTO basemap
   (light/dark follows your device).

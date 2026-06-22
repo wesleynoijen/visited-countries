@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="A personal map of the countries we've visited." />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Visited Countries</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>"
+    />
+
+    <link rel="stylesheet" href="./assets/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1 id="app-title">Visited Countries</h1>
+      <p id="app-subtitle">Everywhere we've been</p>
+    </header>
+
+    <main class="layout">
+      <section class="map-card">
+        <div id="map" class="map"></div>
+        <p class="map-hint">
+          Striped countries were visited by more than one person — tap any country for details.
+        </p>
+      </section>
+
+      <div class="panel">
+        <div id="stats" class="stats"></div>
+
+        <section class="card">
+          <h2 class="card-title">Travellers</h2>
+          <div id="people" class="people"></div>
+        </section>
+
+        <section id="everyone" class="card">
+          <div class="list-head">
+            <h2 class="card-title">Everyone's been</h2>
+            <span class="list-count">0</span>
+          </div>
+          <div class="list-body"></div>
+        </section>
+
+        <section id="onlyone" class="card">
+          <div class="list-head">
+            <h2 class="card-title">Only one of us</h2>
+            <span class="list-count">0</span>
+          </div>
+          <div class="list-body"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <p>Edit <code>data/people.js</code> to change who has been where.</p>
+    </footer>
+
+    <div id="error" class="error" hidden></div>
+
+    <!-- Leaflet is vendored locally — no external/CDN dependency. Loads before the app. -->
+    <script src="./assets/leaflet/leaflet.js"></script>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

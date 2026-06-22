@@ -1,0 +1,420 @@
+/* ===========================================================================
+   Visited Countries — mobile-first, Apple-inspired styling.
+   Light/dark adapt automatically to the OS setting.
+   =========================================================================== */
+
+:root {
+  --bg: #f2f2f7;
+  --bg-elevated: #ffffff;
+  --text: #1c1c1e;
+  --text-secondary: #6c6c70;
+  --separator: rgba(60, 60, 67, 0.16);
+  --accent: #0a84ff;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --header-bg: rgba(242, 242, 247, 0.78);
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --hairline: rgba(60, 60, 67, 0.12);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --bg-elevated: #1c1c1e;
+    --text: #f5f5f7;
+    --text-secondary: #98989f;
+    --separator: rgba(84, 84, 88, 0.55);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.5);
+    --header-bg: rgba(0, 0, 0, 0.7);
+    --hairline: rgba(84, 84, 88, 0.5);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.4;
+}
+
+/* ---- Header --------------------------------------------------------------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: calc(env(safe-area-inset-top) + 14px) 20px 12px;
+  background: var(--header-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.app-header p {
+  margin: 2px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* ---- Layout --------------------------------------------------------------- */
+.layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px max(16px, env(safe-area-inset-left)) 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 920px) {
+  .layout {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    align-items: start;
+    gap: 20px;
+  }
+  .map-card {
+    position: sticky;
+    top: calc(env(safe-area-inset-top) + 92px);
+  }
+}
+
+/* ---- Map ------------------------------------------------------------------ */
+.map-card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 52vh;
+  min-height: 320px;
+  background: var(--bg);
+}
+
+@media (min-width: 920px) {
+  .map {
+    height: calc(100vh - 180px);
+    min-height: 420px;
+  }
+}
+
+.map-hint {
+  margin: 0;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--hairline);
+}
+
+/* ---- Cards ---------------------------------------------------------------- */
+.card {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Stats ---------------------------------------------------------------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.stat-sub {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* ---- People legend -------------------------------------------------------- */
+.people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 10px;
+  background: var(--bg);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+
+.person-name {
+  font-weight: 500;
+}
+
+.person-count {
+  min-width: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--separator);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ---- Lists ---------------------------------------------------------------- */
+.list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.list-count {
+  min-width: 26px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--separator);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.list-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-empty {
+  margin: 8px 2px 2px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.country {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 6px;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.country:last-child {
+  border-bottom: none;
+}
+
+.country:hover,
+.country:focus-visible {
+  background: var(--bg);
+  outline: none;
+}
+
+.country:active {
+  background: var(--separator);
+}
+
+.country-flag {
+  font-size: 1.3rem;
+  width: 1.7em;
+  text-align: center;
+  flex: none;
+}
+
+.country-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.country-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* ---- Dots ----------------------------------------------------------------- */
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dot-color);
+  flex: none;
+  display: inline-block;
+}
+
+.dot--ring {
+  width: 14px;
+  height: 14px;
+  box-shadow: 0 0 0 2px var(--bg-elevated), 0 0 0 3px var(--separator);
+}
+
+/* ---- Footer --------------------------------------------------------------- */
+.app-footer {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  padding: 8px 20px calc(20px + env(safe-area-inset-bottom));
+}
+
+.app-footer code {
+  font-size: 0.85em;
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--separator);
+}
+
+/* ---- Error banner --------------------------------------------------------- */
+.error {
+  margin: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: #ffefef;
+  color: #b00020;
+  font-size: 0.9rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error {
+    background: #3a0d10;
+    color: #ff9ea3;
+  }
+}
+
+/* ---- Leaflet overrides ---------------------------------------------------- */
+.leaflet-container {
+  font-family: inherit;
+  background: var(--bg);
+}
+
+.leaflet-interactive:hover {
+  stroke: var(--text);
+  stroke-width: 1.4;
+}
+
+.country-popup .leaflet-popup-content-wrapper {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.country-popup .leaflet-popup-tip {
+  background: var(--bg-elevated);
+}
+
+.country-popup .leaflet-popup-content {
+  margin: 12px 14px;
+}
+
+.popup-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.popup-people {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.popup-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.leaflet-control-attribution {
+  background: var(--header-bg) !important;
+  color: var(--text-secondary) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 8px 0 0 0;
+  font-size: 0.68rem;
+}
+
+.leaflet-control-attribution a {
+  color: var(--accent) !important;
+}
+
+.leaflet-bar a {
+  background: var(--bg-elevated) !important;
+  color: var(--text) !important;
+  border-bottom-color: var(--hairline) !important;
+}

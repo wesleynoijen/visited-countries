@@ -105,6 +105,17 @@ export async function loadRegions(url) {
         if (score !== null && (best === null || score < best)) best = score;
       }
       if (best === null && code.length >= 2 && region.id.toUpperCase().includes(code)) best = 3;
+
+      // Nothing matched by substring: fall back to near-misses, so a genuine
+      // typo ('Canarie', 'Sicilly') still points at the right region.
+      if (best === null) {
+        const budget = typoBudget(needle);
+        for (const label of [region.name, ...(region.aliases || [])]) {
+          const distance = editDistance(needle, foldName(label), budget);
+          if (distance <= budget && (best === null || 4 + distance < best)) best = 4 + distance;
+        }
+      }
+
       if (best !== null) hits.push({ region, score: best });
     }
 
@@ -123,4 +134,33 @@ export async function loadRegions(url) {
     /** How many distinct countries the whole dataset covers. */
     countryCount: byCountry.size,
   };
+}
+
+/** How many characters a name of this length is allowed to be wrong by. */
+function typoBudget(needle) {
+  if (needle.length < 4) return 0; // too short to guess at
+  return needle.length <= 8 ? 1 : 2;
+}
+
+/**
+ * Levenshtein distance, abandoned as soon as it exceeds `max`. Only ever runs
+ * on entries that failed every cheaper test, so the cost stays negligible.
+ */
+function editDistance(a, b, max) {
+  if (max <= 0) return a === b ? 0 : 1;
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+
+  let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    let rowBest = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      current[j] = Math.min(current[j - 1] + 1, previous[j] + 1, previous[j - 1] + cost);
+      if (current[j] < rowBest) rowBest = current[j];
+    }
+    if (rowBest > max) return max + 1; // no cell in this row can recover
+    previous = current;
+  }
+  return previous[b.length];
 }

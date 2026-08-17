@@ -25,25 +25,101 @@ Perfect for GitHub Pages.
   locally; the only external request is the free CARTO basemap — and your
   coloured-in regions still render without it.
 
-## ✏️ Adding people and places
+## ✏️ Tutorial: add your first trip
 
-Everything you'll normally touch is in **[`data/people.js`](data/people.js)**:
+Say you just spent a week in **Tenerife**. Here is the whole process, start to
+finish. It takes about a minute once you've done it once.
+
+### Step 1 — Find out what the place is called
+
+There are three ways. The first is the easiest, and it works from your phone.
+
+**A. Look it up on your own map.** Open your map, type `Tenerife` in the search
+box at the top and press Enter. The map flies to the Canary Islands and opens a
+popup. At the bottom of that popup is the code:
+
+```
+🇪🇸 Canary Islands
+Spain
+Nobody has been here yet.
+─────────────────────
+code  ES-CN
+```
+
+`ES-CN` is what you need. You can also just tap any region on the map directly —
+every one of them shows its code, visited or not.
+
+**B. Search [`REGIONS.md`](REGIONS.md).** All 953 codes are listed there, grouped
+by country. Press `Ctrl+F` / `Cmd+F` and search for the place or the country. Each
+row tells you the code, the name, whether it counts as mainland, and the other
+names it answers to.
+
+**C. Skip the code.** If you know the name, you can write that instead — see the
+next step.
+
+### Step 2 — Add it to `data/people.js`
+
+This is the only file you normally touch. Open it and find your own entry:
 
 ```js
 export const people = [
   {
     name: 'Wesley',
-    color: COLORS.blue,           // any CSS colour, e.g. '#0A84FF'
-    countries: ['NL', 'ES', 'ES-CN']
+    color: COLORS.blue,
+    countries: [
+      'NL',
+      'ES',
+    ],
   },
-  // add another person here…
 ];
 ```
 
-- **Add a person** → add another object to the array.
-- **Add a place** → add its code to that person's list.
+Add the new place to the list. All three of these lines do exactly the same
+thing, so use whichever you'll remember:
 
-### What a code means
+```js
+      'ES-CN',                 // the code
+      'Canary Islands',        // the English name
+      'Tenerife',              // the island you actually stayed on
+```
+
+The result:
+
+```js
+    countries: [
+      'NL',
+      'ES',
+      'ES-CN',   // ← new
+    ],
+```
+
+Order doesn't matter, duplicates are harmless, and capitals and accents are
+ignored — `'tenerife'`, `'Tenerife'` and `'Canarische Eilanden'` all work.
+
+### Step 3 — Commit and push
+
+```bash
+git add data/people.js
+git commit -m "Add Tenerife"
+git push
+```
+
+### Step 4 — Look at it
+
+GitHub Pages rebuilds in a minute or two — you can watch it under the **Actions**
+tab. Then open your map and **hard refresh** (`Cmd+Shift+R` on Mac, `Ctrl+F5` on
+Windows), otherwise your browser may show you the cached old version.
+
+The Canary Islands are now in your colour, mainland Spain is unchanged, and the
+"Regions" counter has gone up by one.
+
+That's the entire workflow. It's also the security model: anyone can look at the
+map, but only someone who can push to this repository can change what it shows.
+
+## 📖 What a code means
+
+The most important rule: **a bare country code covers that country's mainland
+only.** Anything that sits off on its own is a separate place you have to earn.
 
 | You write | What gets coloured in |
 | --- | --- |
@@ -53,19 +129,45 @@ export const people = [
 | `'Tenerife'` | The same thing, by name or nickname — case and accents are ignored. |
 | `'Canarische Eilanden'` | Also the same thing; common Dutch names work too. |
 
-The rule is the same everywhere: a bare country code covers that country's
-**mainland**, and anything that sits off on its own needs to be added
-separately. So `'US'` is the contiguous states plus DC — Alaska (`US-AK`) and
-Hawaii (`US-HI`) are yours to earn.
+So `'US'` is the contiguous states plus DC — Alaska (`US-AK`) and Hawaii
+(`US-HI`) are separate. `'PT'` is mainland Portugal, not the Azores (`PT-20`) or
+Madeira (`PT-30`).
 
-**Every valid code is listed in [`REGIONS.md`](REGIONS.md)**, or just tap any
-region on the map: the popup shows the code, ready to paste. Codes that match
-nothing are ignored and reported in the browser console together with the
-closest matches, so open DevTools if a place stays grey — it's usually a typo.
+### Recipes
 
-Save, commit, push — the live site updates. That's the whole workflow, and it's
-also the security model: anyone can look at the map, but only someone who can
-push to this repository can change what it shows.
+| What you want | What you write |
+| --- | --- |
+| A country that isn't split up — Bulgaria, Thailand, the UAE | `'BG'`, `'TH'`, `'AE'` |
+| Only the part of a country you actually saw | `'ES-AN'` (Andalusia), `'IT-82'` (Sicily), `'US-NY'` (New York) |
+| A whole country including its islands | `'ES*'`, `'US*'`, `'PT*'` |
+| An island group on its own | `'ES-CN'`, `'PT-20'`, `'FR-COR'`, `'EC-W'` (Galápagos) |
+| A city you visited | the region it's in: `'FR-IDF'` for Paris, `'TR-34'` for Istanbul — or simply write `'Paris'` or `'Istanbul'`, which resolve to those regions |
+
+### Adding another person
+
+Add another object to the array. Give everyone a distinct colour — the presets in
+`COLORS` at the top of the file are Apple's system palette, but any CSS colour
+works:
+
+```js
+export const people = [
+  { name: 'Wesley',  color: COLORS.blue,  countries: ['NL', 'ES'] },
+  { name: 'Madelon', color: COLORS.green, countries: ['NL'] },
+  { name: 'Sam',     color: '#FF9500',    countries: ['NL', 'IT-82'] },
+];
+```
+
+Anywhere two or more people overlap is drawn as diagonal stripes in each of
+their colours, so the Netherlands above ends up striped blue/green/orange.
+
+### When something looks wrong
+
+| What you see | What it means |
+| --- | --- |
+| A place stayed grey | The code didn't match anything. Open the browser console (`F12` → Console) — every skipped entry is listed with the closest matches, so a typo is obvious: <br>`• Wesley: "Tenrife"  — did you mean: Canary Islands (ES-CN)?` |
+| Too much got coloured in | You used a bare country code for a country that's split into regions. `'TR'` colours all 81 Turkish provinces; use `'TR-34'` for Istanbul alone. |
+| An island stayed grey | That's by design — bare country codes are mainland only. Add the island's own code, or use the `*` form. |
+| Nothing changed at all | Either Pages hasn't finished rebuilding (check the **Actions** tab) or your browser cached the old files (hard refresh). |
 
 ### Optional tweaks
 

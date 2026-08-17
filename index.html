@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="A personal map of the countries we've visited." />
+    <meta name="description" content="A personal map of the countries and regions we've visited." />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -15,20 +15,42 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>"
     />
 
+    <link rel="preconnect" href="https://a.basemaps.cartocdn.com" crossorigin />
     <link rel="stylesheet" href="./assets/leaflet/leaflet.css" />
     <link rel="stylesheet" href="./styles/main.css" />
   </head>
   <body>
     <header class="app-header">
-      <h1 id="app-title">Visited Countries</h1>
-      <p id="app-subtitle">Everywhere we've been</p>
+      <div class="app-heading">
+        <h1 id="app-title">Visited Countries</h1>
+        <p id="app-subtitle">Everywhere we've been</p>
+      </div>
+
+      <div class="search">
+        <label class="sr-only" for="search-input">Search for a country or region</label>
+        <input
+          id="search-input"
+          class="search-input"
+          type="search"
+          placeholder="Search 950+ countries and regions…"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="search-results"
+          aria-autocomplete="list"
+        />
+        <div id="search-results" class="search-results" role="listbox" hidden></div>
+      </div>
     </header>
 
     <main class="layout">
       <section class="map-card">
         <div id="map" class="map"></div>
         <p class="map-hint">
-          Striped countries were visited by more than one person — tap any country for details.
+          Striped regions were visited by more than one person — tap anywhere for details and its
+          code.
         </p>
       </section>
 
@@ -38,6 +60,14 @@
         <section class="card">
           <h2 class="card-title">Travellers</h2>
           <div id="people" class="people"></div>
+        </section>
+
+        <section id="continents" class="card">
+          <div class="list-head">
+            <h2 class="card-title">By continent</h2>
+            <span class="list-count">0%</span>
+          </div>
+          <div class="list-body"></div>
         </section>
 
         <section id="everyone" class="card">
@@ -59,7 +89,10 @@
     </main>
 
     <footer class="app-footer">
-      <p>Edit <code>data/people.js</code> to change who has been where.</p>
+      <p>
+        Edit <code>data/people.js</code> to change who has been where — every code is in
+        <code>REGIONS.md</code>.
+      </p>
     </footer>
 
     <div id="error" class="error" hidden></div>

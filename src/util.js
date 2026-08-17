@@ -2,12 +2,24 @@
 //  Small, dependency-free helpers.
 // =============================================================================
 
-/**
- * Normalise a country code for comparison: trim + uppercase.
- * Returns '' for anything that isn't a non-empty string.
- */
+/** Normalise a code for comparison: trim + uppercase. */
 export function normalizeCode(code) {
   return typeof code === 'string' ? code.trim().toUpperCase() : '';
+}
+
+/**
+ * Fold a place name into something forgiving to match on: lower case, no
+ * accents, no punctuation. 'Île-de-France' and 'ile de france' both become
+ * 'iledefrance', so people can type whichever they find easier.
+ */
+export function foldName(name) {
+  return typeof name === 'string'
+    ? name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '')
+        .toLowerCase()
+    : '';
 }
 
 /**
@@ -41,4 +53,19 @@ export function colorDot(color, { ring = false } = {}) {
   const dot = el('span', { className: ring ? 'dot dot--ring' : 'dot' });
   dot.style.setProperty('--dot-color', color);
   return dot;
+}
+
+/** Run `fn` at most once per animation frame. */
+export function throttleFrame(fn) {
+  let queued = false;
+  let lastArgs;
+  return (...args) => {
+    lastArgs = args;
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      fn(...lastArgs);
+    });
+  };
 }

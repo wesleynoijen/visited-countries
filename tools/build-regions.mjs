@@ -369,22 +369,108 @@ function writeGeometry(admin1, assignments) {
   writeFileSync(tmp, JSON.stringify(tagged));
   console.log(`Tagged ${tagged.features.length} features; dissolving…`);
 
-  // Tuned by hand: ~800 KB on disk (≈230 KB over the wire) while every region
-  // keeps a clickable shape, down to Saba and Gibraltar. Raise the percentage
-  // for crisper coastlines at the cost of download size.
-  const out = join(ROOT, 'assets', 'world-regions.geojson');
-  mapshaper([
-    tmp,
-    '-dissolve', 'id',
-    '-filter-islands', 'min-area=1km2', 'remove-empty',
-    '-simplify', 'visvalingam', 'weighted', 'percentage=4%', 'keep-shapes',
-    '-clean',
-    '-o', 'precision=0.004', 'format=geojson', out,
-  ]);
+  // One simplification setting cannot serve both Russia and Santorini. Vertex
+  // budgets are spent globally, so a percentage that keeps continents at a sane
+  // size wipes small islands off the map entirely, and `keep-shapes` only
+  // guarantees a region keeps *one* of its parts. Coordinate rounding has the
+  // same problem: 0.004° is 440 m, which collapses the Vatican outright.
+  //
+  // So each part of the world is simplified at the scale it deserves, and the
+  // three passes are stitched back together below by part area.
+  const coarse = simplify(tmp, 'coarse', {
+    // Continents and big islands: aggressive, since 4% of a 10m coastline is
+    // still far more detail than a world map at zoom 9 can show.
+    filter: 'min-area=1km2',
+    steps: ['-simplify', 'visvalingam', 'weighted', 'percentage=4%', 'keep-shapes', '-clean'],
+    precision: 'precision=0.004',
+  });
+  const fine = simplify(tmp, 'fine', {
+    // Islands: a fixed 900 m tolerance, so shape quality no longer depends on
+    // how big the island happens to be.
+    filter: 'min-area=0.2km2',
+    steps: ['-simplify', 'visvalingam', 'weighted', 'interval=900', 'keep-shapes'],
+    precision: 'precision=0.004',
+  });
+  const raw = simplify(tmp, 'raw', {
+    // Microstates and islets: untouched. They have so few vertices that full
+    // detail costs almost nothing, and anything less erases them.
+    filter: 'min-area=0.05km2',
+    steps: [],
+    precision: 'precision=0.0002',
+  });
 
-  const built = JSON.parse(readFileSync(out, 'utf8'));
+  const out = join(ROOT, 'assets', 'world-regions.geojson');
+  const built = stitch([
+    { source: coarse, min: 1500 }, // km² — continents and large islands
+    { source: fine, min: 10 }, //          islands
+    { source: raw, min: 0 }, //            islets and microstates
+  ]);
+  writeFileSync(out, JSON.stringify(built));
   console.log(`Wrote ${out} — ${built.features.length} features, ${sizeOf(out)}`);
   return built;
+}
+
+/** Run one simplification pass over the tagged features. */
+function simplify(input, name, { filter, steps, precision }) {
+  const out = join(cacheDir, `pass-${name}.geojson`);
+  mapshaper([
+    input,
+    '-dissolve', 'id',
+    '-filter-islands', filter, 'remove-empty',
+    ...steps,
+    '-o', precision, 'format=geojson', out,
+  ]);
+  return JSON.parse(readFileSync(out, 'utf8'));
+}
+
+/**
+ * Rebuild each region from whichever pass suits each of its parts: the mainland
+ * from the coarse pass, its islands from the fine one, its islets from the raw
+ * one. Passes are listed largest-first and each claims the parts above its
+ * threshold that no earlier pass took.
+ */
+function stitch(passes) {
+  const indexed = passes.map((p) => ({
+    min: p.min,
+    byId: new Map(p.source.features.map((f) => [f.properties.id, f])),
+  }));
+
+  const ids = new Set(indexed.flatMap((p) => [...p.byId.keys()]));
+  const features = [];
+
+  for (const id of ids) {
+    const rings = [];
+    let ceiling = Infinity;
+    for (const pass of indexed) {
+      for (const part of polygonsOf(pass.byId.get(id))) {
+        const size = geometryArea({ type: 'Polygon', coordinates: part });
+        if (size > pass.min && size <= ceiling) rings.push(part);
+      }
+      ceiling = pass.min;
+    }
+    if (!rings.length) continue; // reported by verify()
+
+    features.push({
+      type: 'Feature',
+      properties: { id },
+      geometry:
+        rings.length === 1
+          ? { type: 'Polygon', coordinates: rings[0] }
+          : { type: 'MultiPolygon', coordinates: rings },
+    });
+  }
+
+  features.sort((a, b) => a.properties.id.localeCompare(b.properties.id));
+  return { type: 'FeatureCollection', features };
+}
+
+/** Every polygon of a feature, as an array of ring-arrays. */
+function polygonsOf(feature) {
+  const geometry = feature?.geometry;
+  if (!geometry) return [];
+  if (geometry.type === 'Polygon') return [geometry.coordinates];
+  if (geometry.type === 'MultiPolygon') return geometry.coordinates;
+  return [];
 }
 
 function writeReference(regions) {
@@ -458,7 +544,12 @@ function writeMarkdown(regions) {
  * shipping a code you can type but never see, drop it — and say so, loudly.
  */
 function verify(regions, built) {
-  const drawn = new Set(built.features.map((f) => f.properties.id));
+  // Note the geometry check: a feature can survive simplification as an entry
+  // with `geometry: null`, which looks fine in a feature count and draws
+  // nothing at all. That is how the Vatican went missing once.
+  const drawn = new Set(
+    built.features.filter((f) => polygonsOf(f).length > 0).map((f) => f.properties.id)
+  );
   const kept = regions.filter((r) => drawn.has(r.id));
   for (const r of regions) {
     if (!drawn.has(r.id)) {

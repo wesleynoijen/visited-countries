@@ -11,7 +11,7 @@ A bare country code means **the mainland only**: `ES` is mainland Spain, and
 the Canaries, Balearics, Ceuta and Melilla stay uncoloured until you add them.
 Write `ES*` when you want the whole country, islands included.
 
-953 regions across 250 countries and territories.
+954 regions across 251 countries and territories.
 
 ## Afghanistan
 
@@ -407,6 +407,12 @@ Write `ES*` when you want the whole country, islands included.
 | Code | Region | Mainland | Also answers to |
 | --- | --- | --- | --- |
 | `CK` | Cook Islands | yes |  |
+
+## Coral Sea Islands
+
+| Code | Region | Mainland | Also answers to |
+| --- | --- | --- | --- |
+| `CSI` | Coral Sea Islands | yes |  |
 
 ## Costa Rica
 

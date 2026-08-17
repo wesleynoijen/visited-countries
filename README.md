@@ -8,7 +8,7 @@ It's a **static site** — no database, no backend, no build step to deploy. All
 data lives in code, so the published map only ever changes when you commit.
 Perfect for GitHub Pages.
 
-- 🗺️ **953 regions, not just countries.** Mainland Spain, the Canary Islands and
+- 🗺️ **954 regions, not just countries.** Mainland Spain, the Canary Islands and
   the Balearics are three separate things you can colour in — as are Hawaii,
   Corsica, the Azores, Zanzibar, Sardinia and the Galápagos.
 - 🇺🇸 **States and provinces** for the USA, Canada, Australia, Brazil, Germany,
@@ -49,7 +49,7 @@ code  ES-CN
 `ES-CN` is what you need. You can also just tap any region on the map directly —
 every one of them shows its code, visited or not.
 
-**B. Search [`REGIONS.md`](REGIONS.md).** All 953 codes are listed there, grouped
+**B. Search [`REGIONS.md`](REGIONS.md).** All 954 codes are listed there, grouped
 by country. Press `Ctrl+F` / `Cmd+F` and search for the place or the country. Each
 row tells you the code, the name, whether it counts as mainland, and the other
 names it answers to.
@@ -214,7 +214,7 @@ src/
   ui.js                  # header, stats, continent bars, legend, lists
   util.js                # small helpers (flags, name folding, dots)
 assets/
-  world-regions.geojson  # the 953 region shapes, keyed by region id
+  world-regions.geojson  # the 954 region shapes, keyed by region id
   regions.json           # names, countries, continents, aliases
   leaflet/               # vendored Leaflet (no CDN dependency)
 tools/
@@ -260,6 +260,27 @@ worked out automatically by [`tools/build-regions.mjs`](tools/build-regions.mjs)
 
 The script prints every detached region it produced so you can eyeball the
 result, and warns loudly if a region ends up without a shape.
+
+### Why the shapes are simplified three times
+
+One simplification setting cannot serve both Russia and Santorini. Simplifiers
+spend their vertex budget across the whole dataset, so a setting that keeps
+continents at a reasonable download size deletes small islands outright —
+`keep-shapes` only guarantees that a region keeps *one* of its parts, not all of
+them. Coordinate rounding behaves the same way: 0.004° is 440 m on the ground,
+which is wider than Vatican City.
+
+So the build makes three passes and stitches them back together by part size:
+
+| Pass | Setting | Supplies |
+| --- | --- | --- |
+| Coarse | 4% of vertices, rounded to 0.004° | parts over 1,500 km² — continents, big islands |
+| Fine | fixed 900 m tolerance | parts from 10 to 1,500 km² — ordinary islands |
+| Raw | no simplification, rounded to 0.0002° | anything smaller — islets and microstates |
+
+Each region is then rebuilt from whichever pass suits each of its parts. That is
+why the South Aegean keeps all 35 of its islands and the Vatican still exists,
+at 1.7 MB total (about 470 KB over the wire).
 
 ## 📦 Data & credits
 

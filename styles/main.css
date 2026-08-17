@@ -51,6 +51,18 @@ body {
   line-height: 1.4;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---- Header --------------------------------------------------------------- */
 .app-header {
   position: sticky;
@@ -61,6 +73,9 @@ body {
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .app-header h1 {
@@ -74,6 +89,135 @@ body {
   margin: 2px 0 0;
   color: var(--text-secondary);
   font-size: 0.95rem;
+}
+
+@media (min-width: 700px) {
+  .app-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .app-heading {
+    flex: none;
+  }
+}
+
+/* ---- Search --------------------------------------------------------------- */
+.search {
+  position: relative;
+  flex: 1;
+  max-width: 460px;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px 10px 38px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--bg-elevated) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E")
+    no-repeat 11px center / 18px 18px;
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem; /* 16px keeps iOS from zooming the page on focus */
+  appearance: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.18);
+}
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--hairline);
+  -webkit-overflow-scrolling: touch;
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-result.is-active {
+  background: var(--bg);
+}
+
+.search-flag {
+  font-size: 1.25rem;
+  flex: none;
+  width: 1.5em;
+  text-align: center;
+}
+
+.search-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.search-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-country {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.search-meta {
+  flex: none;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-meta.is-visited {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.search-meta code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--separator);
+  font-size: 0.9em;
 }
 
 /* ---- Layout --------------------------------------------------------------- */
@@ -111,6 +255,18 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   overflow: hidden;
+}
+
+.map-card:fullscreen {
+  border-radius: 0;
+}
+
+.map-card:fullscreen .map {
+  height: 100vh;
+}
+
+.map-card:fullscreen .map-hint {
+  display: none;
 }
 
 .map {
@@ -216,14 +372,62 @@ body {
 }
 
 .person-count {
-  min-width: 20px;
-  padding: 0 7px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.person-count strong {
+  color: var(--text);
+}
+
+/* ---- Continent progress --------------------------------------------------- */
+.continent {
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.continent:last-child {
+  border-bottom: none;
+}
+
+.continent-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.continent-name {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.continent-count {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  height: 6px;
   border-radius: 999px;
   background: var(--separator);
-  color: var(--text);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-align: center;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), #5ac8fa);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.continent-sub {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
 /* ---- Lists ---------------------------------------------------------------- */
@@ -256,7 +460,7 @@ body {
   font-size: 0.9rem;
 }
 
-.country {
+.region {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -274,38 +478,70 @@ body {
   transition: background-color 0.15s ease;
 }
 
-.country:last-child {
+.region:last-child {
   border-bottom: none;
 }
 
-.country:hover,
-.country:focus-visible {
+.region:hover,
+.region:focus-visible {
   background: var(--bg);
   outline: none;
 }
 
-.country:active {
+.region:active {
   background: var(--separator);
 }
 
-.country-flag {
+.region-flag {
   font-size: 1.3rem;
   width: 1.7em;
   text-align: center;
   flex: none;
 }
 
-.country-name {
+.region-text {
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  min-width: 0;
+}
+
+.region-name {
   font-weight: 500;
 }
 
-.country-who {
+.region-country {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.region-who {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   color: var(--text-secondary);
   font-size: 0.85rem;
+  flex: none;
+}
+
+.list-more {
+  margin-top: 8px;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.list-more:hover,
+.list-more:focus-visible {
+  background: var(--separator);
+  outline: none;
 }
 
 /* ---- Dots ----------------------------------------------------------------- */
@@ -362,36 +598,43 @@ body {
   background: var(--bg);
 }
 
-.leaflet-interactive:hover {
-  stroke: var(--text);
-  stroke-width: 1.4;
+/* Hover styling is applied per-layer in src/map.js so it can respect whether a
+   region is visited; nothing to do here but keep the cursor honest. */
+.leaflet-interactive {
+  cursor: pointer;
 }
 
-.country-popup .leaflet-popup-content-wrapper {
+.region-popup .leaflet-popup-content-wrapper {
   background: var(--bg-elevated);
   color: var(--text);
   border-radius: 14px;
   box-shadow: var(--shadow);
 }
 
-.country-popup .leaflet-popup-tip {
+.region-popup .leaflet-popup-tip {
   background: var(--bg-elevated);
 }
 
-.country-popup .leaflet-popup-content {
+.region-popup .leaflet-popup-content {
   margin: 12px 14px;
 }
 
 .popup-title {
   font-weight: 600;
   font-size: 1rem;
-  margin-bottom: 8px;
+}
+
+.popup-sub {
+  margin-top: 1px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
 }
 
 .popup-people {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-top: 9px;
 }
 
 .popup-person {
@@ -399,6 +642,32 @@ body {
   align-items: center;
   gap: 8px;
   font-size: 0.9rem;
+}
+
+.popup-empty {
+  margin: 9px 0 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.popup-code {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.popup-code code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--separator);
+  color: var(--text);
+  font-size: 0.95em;
+  user-select: all;
 }
 
 .leaflet-control-attribution {
@@ -417,4 +686,10 @@ body {
   background: var(--bg-elevated) !important;
   color: var(--text) !important;
   border-bottom-color: var(--hairline) !important;
+}
+
+.fullscreen-control a {
+  font-size: 1.05rem;
+  line-height: 30px;
+  text-align: center;
 }

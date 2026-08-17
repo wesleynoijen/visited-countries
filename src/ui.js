@@ -1,36 +1,47 @@
 // =============================================================================
-//  Renders the non-map UI: header, stats, traveller legend and the two lists.
-//  Tapping any country row focuses it on the map (via the onFocus callback).
+//  Renders everything that is not the map: header, statistics, the per-
+//  continent progress bars, the traveller legend and the two lists.
+//  Tapping any row focuses that region on the map (via the onFocus callback).
 // =============================================================================
 
 import { config } from '../data/config.js';
 import { flagEmoji, el, colorDot } from './util.js';
 
-export function renderUI({ model, onFocus }) {
+export function renderUI({ model, regions, onFocus }) {
   document.getElementById('app-title').textContent = config.title;
   document.getElementById('app-subtitle').textContent = config.subtitle;
   document.title = config.title;
 
-  renderStats(model);
+  renderStats(model, regions);
   renderPeople(model);
-  renderCountryList('everyone', model.everyone, {
+  renderContinents(model);
+  renderRegionList('everyone', model.everyone, {
     onFocus,
-    empty: 'No country has been visited by everyone yet.',
+    empty: 'No region has been visited by everyone yet.',
   });
-  renderCountryList('onlyone', model.onlyOne, {
+  renderRegionList('onlyone', model.onlyOne, {
     onFocus,
     showVisitor: true,
-    empty: 'No country has been visited by exactly one person.',
+    empty: 'No region has been visited by exactly one person.',
   });
 }
 
-function renderStats(model) {
+function renderStats(model, regions) {
   const stats = [
-    { value: model.totalVisited, label: 'Countries', sub: `of ${config.worldCountryCount}` },
-    { value: model.people.length, label: model.people.length === 1 ? 'Traveller' : 'Travellers' },
+    {
+      value: model.visitedCountries.size,
+      label: 'Countries',
+      sub: `of ${regions.countryCount}`,
+    },
+    {
+      value: model.totalVisited,
+      label: 'Regions',
+      sub: `of ${regions.list.length}`,
+    },
     { value: model.everyone.length, label: 'Visited by all' },
     { value: model.onlyOne.length, label: 'Unique to one' },
   ];
+
   const root = document.getElementById('stats');
   root.replaceChildren();
   for (const s of stats) {
@@ -49,12 +60,63 @@ function renderPeople(model) {
     const chip = el('div', { className: 'person' });
     chip.appendChild(colorDot(p.color, { ring: true }));
     chip.appendChild(el('span', { className: 'person-name', text: p.name }));
-    chip.appendChild(el('span', { className: 'person-count', text: String(p.count) }));
+    const counts = el('span', { className: 'person-count' });
+    counts.appendChild(el('strong', { text: String(p.countryCount) }));
+    counts.appendChild(el('span', { text: p.countryCount === 1 ? ' country' : ' countries' }));
+    chip.appendChild(counts);
     root.appendChild(chip);
   }
 }
 
-function renderCountryList(sectionId, items, { onFocus, showVisitor = false, empty }) {
+function renderContinents(model) {
+  const section = document.getElementById('continents');
+  const body = section.querySelector('.list-body');
+  body.replaceChildren();
+
+  const totalCountries = model.continents.reduce((sum, c) => sum + c.countries, 0);
+  const visitedCountries = model.continents.reduce((sum, c) => sum + c.visitedCountries, 0);
+  const percent = totalCountries ? Math.round((visitedCountries / totalCountries) * 100) : 0;
+  section.querySelector('.list-count').textContent = `${percent}% of the world`;
+
+  for (const continent of model.continents) {
+    if (!continent.countries) continue;
+
+    const row = el('div', { className: 'continent' });
+
+    const head = el('div', { className: 'continent-head' });
+    head.appendChild(el('span', { className: 'continent-name', text: continent.name }));
+    head.appendChild(
+      el('span', {
+        className: 'continent-count',
+        text: `${continent.visitedCountries}/${continent.countries}`,
+      })
+    );
+    row.appendChild(head);
+
+    const track = el('div', { className: 'bar' });
+    const fill = el('div', { className: 'bar-fill' });
+    // A sliver of colour reads better than an empty track for 1-of-50.
+    fill.style.width = continent.share > 0 ? `${Math.max(2, continent.share * 100)}%` : '0';
+    track.appendChild(fill);
+    row.appendChild(track);
+
+    if (continent.visitedRegions > continent.visitedCountries) {
+      row.appendChild(
+        el('span', {
+          className: 'continent-sub',
+          text: `${continent.visitedRegions} regions visited`,
+        })
+      );
+    }
+
+    body.appendChild(row);
+  }
+}
+
+/** How many rows to show before collapsing a list behind a button. */
+const LIST_PREVIEW = 25;
+
+function renderRegionList(sectionId, items, { onFocus, showVisitor = false, empty }) {
   const section = document.getElementById(sectionId);
   section.querySelector('.list-count').textContent = String(items.length);
   const body = section.querySelector('.list-body');
@@ -65,17 +127,48 @@ function renderCountryList(sectionId, items, { onFocus, showVisitor = false, emp
     return;
   }
 
-  for (const c of items) {
-    const row = el('button', { className: 'country', attrs: { type: 'button' } });
-    row.appendChild(el('span', { className: 'country-flag', text: flagEmoji(c.a2) || '🏳️' }));
-    row.appendChild(el('span', { className: 'country-name', text: c.name }));
-    if (showVisitor && c.visitors[0]) {
-      const who = el('span', { className: 'country-who' });
-      who.appendChild(colorDot(c.visitors[0].color));
-      who.appendChild(el('span', { text: c.visitors[0].name }));
+  // Once a country is split into provinces a list can run to a few hundred
+  // rows, which buries everything below it. Show a sensible slice by default.
+  if (items.length > LIST_PREVIEW) {
+    const shown = items.slice(0, LIST_PREVIEW);
+    fillList(body, shown, { onFocus, showVisitor });
+
+    const more = el('button', {
+      className: 'list-more',
+      text: `Show all ${items.length}`,
+      attrs: { type: 'button' },
+    });
+    more.addEventListener('click', () => {
+      more.remove();
+      fillList(body, items.slice(LIST_PREVIEW), { onFocus, showVisitor });
+    });
+    body.appendChild(more);
+    return;
+  }
+
+  fillList(body, items, { onFocus, showVisitor });
+}
+
+function fillList(body, items, { onFocus, showVisitor }) {
+  for (const item of items) {
+    const row = el('button', { className: 'region', attrs: { type: 'button' } });
+    row.appendChild(el('span', { className: 'region-flag', text: flagEmoji(item.country) || '🏳️' }));
+
+    const text = el('span', { className: 'region-text' });
+    text.appendChild(el('span', { className: 'region-name', text: item.name }));
+    if (item.name !== item.countryName) {
+      text.appendChild(el('span', { className: 'region-country', text: item.countryName }));
+    }
+    row.appendChild(text);
+
+    if (showVisitor && item.visitors[0]) {
+      const who = el('span', { className: 'region-who' });
+      who.appendChild(colorDot(item.visitors[0].color));
+      who.appendChild(el('span', { text: item.visitors[0].name }));
       row.appendChild(who);
     }
-    row.addEventListener('click', () => onFocus(c.a3));
+
+    row.addEventListener('click', () => onFocus(item.id));
     body.appendChild(row);
   }
 }

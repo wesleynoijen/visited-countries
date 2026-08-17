@@ -1,66 +1,131 @@
 // =============================================================================
 //  Domain model.
-//  Turns the raw `people` data + country reference into everything the UI and
-//  map need: who visited what, the two summary lists, and stats.
+//  Turns the raw `people` data + the region reference into everything the map
+//  and the UI need: who visited what, the summary lists, and the statistics.
 // =============================================================================
 
 import { byName } from './util.js';
 
 /**
- * @param {Array} people    raw people from data/people.js
- * @param {object} countries lookup helpers from loadCountries()
+ * @param {Array} people  raw people from data/people.js
+ * @param {object} regions lookup helpers from loadRegions()
  */
-export function buildModel(people, countries) {
+export function buildModel(people, regions) {
   const warnings = []; // unknown codes, surfaced in the console
 
-  // Normalise each person's visited list to a Set of canonical alpha-3 codes.
-  const normPeople = people.map((p, index) => {
-    const a3 = new Set();
-    for (const raw of p.countries || []) {
-      const code = countries.toA3(raw);
-      if (code) a3.add(code);
-      else warnings.push({ person: p.name, code: raw });
+  const normPeople = people.map((person, index) => {
+    const ids = new Set();
+    const countries = new Set();
+
+    for (const entry of person.countries || []) {
+      const match = regions.expand(entry);
+      if (!match) {
+        warnings.push({ person: person.name, code: entry, suggestions: regions.suggest(entry) });
+        continue;
+      }
+      for (const region of match.regions) {
+        ids.add(region.id);
+        countries.add(region.country);
+      }
     }
-    return { name: p.name, color: p.color, index, a3, count: a3.size };
+
+    return {
+      name: person.name,
+      color: person.color,
+      index,
+      ids,
+      countries,
+      count: ids.size,
+      countryCount: countries.size,
+    };
   });
 
-  // visitIndex: alpha-3 -> people who visited it (kept in input order).
+  // visitIndex: region id -> the people who have been there, in input order.
   const visitIndex = new Map();
   for (const person of normPeople) {
-    for (const code of person.a3) {
-      if (!visitIndex.has(code)) visitIndex.set(code, []);
-      visitIndex.get(code).push(person);
+    for (const id of person.ids) {
+      if (!visitIndex.has(id)) visitIndex.set(id, []);
+      visitIndex.get(id).push(person);
     }
   }
 
   const totalPeople = normPeople.length;
-  const everyone = []; // visited by every person (intersection)
-  const onlyOne = []; // visited by exactly one person (unique)
+  const everyone = []; // visited by every person (the intersection)
+  const onlyOne = []; // visited by exactly one person
 
-  const decorate = (a3) => {
-    const rec = countries.get(a3);
+  const decorate = (id) => {
+    const region = regions.get(id);
     return {
-      a3,
-      a2: rec?.a2 ?? null,
-      name: rec?.name ?? a3,
-      region: rec?.region ?? null,
-      visitors: visitIndex.get(a3),
+      id,
+      name: region?.name ?? id,
+      country: region?.country ?? null,
+      countryName: region?.countryName ?? null,
+      continent: region?.continent ?? null,
+      visitors: visitIndex.get(id),
     };
   };
 
-  for (const [a3, visitors] of visitIndex) {
-    if (totalPeople > 0 && visitors.length === totalPeople) everyone.push(decorate(a3));
-    if (visitors.length === 1) onlyOne.push(decorate(a3));
+  for (const [id, visitors] of visitIndex) {
+    if (totalPeople > 0 && visitors.length === totalPeople) everyone.push(decorate(id));
+    if (visitors.length === 1) onlyOne.push(decorate(id));
   }
   everyone.sort(byName);
   onlyOne.sort(byName);
+
+  // Countries anybody has set foot in — one region is enough to count.
+  const visitedCountries = new Set();
+  for (const id of visitIndex.keys()) {
+    const region = regions.get(id);
+    if (region) visitedCountries.add(region.country);
+  }
 
   return {
     people: normPeople,
     visitIndex,
     everyone,
     onlyOne,
-    totalVisited: visitIndex.size, // distinct countries anyone has visited (union)
+    visitedCountries,
+    totalVisited: visitIndex.size,
+    continents: continentStats(regions, visitIndex),
     warnings,
   };
+}
+
+/**
+ * Per-continent progress: how many of its regions and countries have been
+ * visited. Continents with nothing in them at all are left out.
+ */
+function continentStats(regions, visitIndex) {
+  const stats = new Map();
+
+  for (const region of regions.list) {
+    const key = region.continent || 'Elsewhere';
+    if (!stats.has(key)) {
+      stats.set(key, {
+        name: key,
+        regions: 0,
+        visitedRegions: 0,
+        countries: new Set(),
+        visitedCountries: new Set(),
+      });
+    }
+    const entry = stats.get(key);
+    entry.regions += 1;
+    entry.countries.add(region.country);
+    if (visitIndex.has(region.id)) {
+      entry.visitedRegions += 1;
+      entry.visitedCountries.add(region.country);
+    }
+  }
+
+  return [...stats.values()]
+    .map((entry) => ({
+      name: entry.name,
+      regions: entry.regions,
+      visitedRegions: entry.visitedRegions,
+      countries: entry.countries.size,
+      visitedCountries: entry.visitedCountries.size,
+      share: entry.countries.size ? entry.visitedCountries.size / entry.countries.size : 0,
+    }))
+    .sort((a, b) => b.visitedCountries - a.visitedCountries || b.countries - a.countries);
 }

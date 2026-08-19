@@ -20,9 +20,10 @@ Perfect for GitHub Pages.
   Portugal, Greece, Sweden, Norway, Poland, Russia, China, India, Argentina,
   Mexico, South Africa, Indonesia, Japan, Turkey and Kazakhstan.
 - 🔎 **Search** any of them by name, nickname or code — in English or Dutch.
-- 📊 Per-continent progress bars, plus lists of where **everyone** has been and
-  where only **one** of you has been — counted **per country**, so a trip
-  through the Netherlands is one row, not twelve provinces.
+- 📊 Per-continent progress bars, plus a list of where **everyone** has been
+  and one of everywhere still missing **somebody**. All three count countries,
+  not regions, so a trip through the Netherlands is one row and not twelve
+  provinces.
 - 🎨 Per-person colours; **diagonal stripes** where people overlap.
 - 📱 Mobile-first, Apple-inspired design; responsive two-column layout on
   larger screens.

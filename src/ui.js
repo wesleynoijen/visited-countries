@@ -95,7 +95,7 @@ function renderContinents(model) {
     head.appendChild(
       el('span', {
         className: 'continent-count',
-        text: `${continent.visitedCountries}/${continent.countries}`,
+        text: `${Math.round(continent.share * 100)}%`,
       })
     );
     row.appendChild(head);
@@ -107,14 +107,16 @@ function renderContinents(model) {
     track.appendChild(fill);
     row.appendChild(track);
 
-    if (continent.visitedRegions > continent.visitedCountries) {
-      row.appendChild(
-        el('span', {
-          className: 'continent-sub',
-          text: `${continent.visitedRegions} regions visited`,
-        })
-      );
-    }
+    // Countries, not regions: 'GR' alone is fourteen regions, which made the
+    // old region count read as far more travelling than actually happened.
+    row.appendChild(
+      el('span', {
+        className: 'continent-sub',
+        text: `${continent.visitedCountries} of ${continent.countries} ${
+          continent.countries === 1 ? 'country' : 'countries'
+        } visited`,
+      })
+    );
 
     body.appendChild(row);
   }

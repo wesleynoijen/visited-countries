@@ -133,8 +133,9 @@ function rollUpToCountries(regions, visitIndex) {
 }
 
 /**
- * Per-continent progress: how many of its regions and countries have been
- * visited. Continents with nothing in them at all are left out.
+ * Per-continent progress, counted in countries. Regions would flatter the
+ * numbers badly — one trip to Greece is fourteen of them — so the bars measure
+ * the same thing the lists do. Continents with nothing in them are left out.
  */
 function continentStats(regions, visitIndex) {
   const stats = new Map();
@@ -142,28 +143,16 @@ function continentStats(regions, visitIndex) {
   for (const region of regions.list) {
     const key = region.continent || 'Elsewhere';
     if (!stats.has(key)) {
-      stats.set(key, {
-        name: key,
-        regions: 0,
-        visitedRegions: 0,
-        countries: new Set(),
-        visitedCountries: new Set(),
-      });
+      stats.set(key, { name: key, countries: new Set(), visitedCountries: new Set() });
     }
     const entry = stats.get(key);
-    entry.regions += 1;
     entry.countries.add(region.country);
-    if (visitIndex.has(region.id)) {
-      entry.visitedRegions += 1;
-      entry.visitedCountries.add(region.country);
-    }
+    if (visitIndex.has(region.id)) entry.visitedCountries.add(region.country);
   }
 
   return [...stats.values()]
     .map((entry) => ({
       name: entry.name,
-      regions: entry.regions,
-      visitedRegions: entry.visitedRegions,
       countries: entry.countries.size,
       visitedCountries: entry.visitedCountries.size,
       share: entry.countries.size ? entry.visitedCountries.size / entry.countries.size : 0,

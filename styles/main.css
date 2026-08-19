@@ -520,6 +520,12 @@ body {
   white-space: nowrap;
 }
 
+/* Several travellers sit closer together than the gap before their label. */
+.region-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
 .region-who {
   display: inline-flex;
   align-items: center;

@@ -5,6 +5,10 @@
 //  The two lists are per COUNTRY, not per region: one "Netherlands" row rather
 //  than twelve provinces. Tapping a row still frames exactly the regions that
 //  were coloured in, so Spain zooms to Ibiza alone if that is all you visited.
+//
+//  They are complements: everywhere all of you have been, and everywhere that
+//  is still missing somebody — which with three travellers includes the
+//  two-out-of-three countries, not just the ones only one of you has seen.
 // =============================================================================
 
 import { config } from '../data/config.js';
@@ -22,10 +26,10 @@ export function renderUI({ model, regions, onFocus }) {
     onFocus,
     empty: 'No country has been visited by everyone yet.',
   });
-  renderCountryList('onlyone', model.onlyOne, {
+  renderCountryList('notall', model.notEveryone, {
     onFocus,
-    showVisitor: true,
-    empty: 'No country has been visited by exactly one person.',
+    groupSize: model.people.length, // set = name who has been there
+    empty: 'Every country on the map has been visited by all of you.',
   });
 }
 
@@ -42,7 +46,7 @@ function renderStats(model, regions) {
       sub: `of ${regions.list.length}`,
     },
     { value: model.everyone.length, label: 'Visited by all', sub: 'countries' },
-    { value: model.onlyOne.length, label: 'Unique to one', sub: 'countries' },
+    { value: model.notEveryone.length, label: 'Only some of us', sub: 'countries' },
   ];
 
   const root = document.getElementById('stats');
@@ -119,7 +123,7 @@ function renderContinents(model) {
 /** How many rows to show before collapsing a list behind a button. */
 const LIST_PREVIEW = 25;
 
-function renderCountryList(sectionId, items, { onFocus, showVisitor = false, empty }) {
+function renderCountryList(sectionId, items, { onFocus, groupSize = 0, empty }) {
   const section = document.getElementById(sectionId);
   section.querySelector('.list-count').textContent = String(items.length);
   const body = section.querySelector('.list-body');
@@ -134,7 +138,7 @@ function renderCountryList(sectionId, items, { onFocus, showVisitor = false, emp
   // below the list. Show a sensible slice by default.
   if (items.length > LIST_PREVIEW) {
     const shown = items.slice(0, LIST_PREVIEW);
-    fillList(body, shown, { onFocus, showVisitor });
+    fillList(body, shown, { onFocus, groupSize });
 
     const more = el('button', {
       className: 'list-more',
@@ -143,16 +147,16 @@ function renderCountryList(sectionId, items, { onFocus, showVisitor = false, emp
     });
     more.addEventListener('click', () => {
       more.remove();
-      fillList(body, items.slice(LIST_PREVIEW), { onFocus, showVisitor });
+      fillList(body, items.slice(LIST_PREVIEW), { onFocus, groupSize });
     });
     body.appendChild(more);
     return;
   }
 
-  fillList(body, items, { onFocus, showVisitor });
+  fillList(body, items, { onFocus, groupSize });
 }
 
-function fillList(body, items, { onFocus, showVisitor }) {
+function fillList(body, items, { onFocus, groupSize }) {
   for (const item of items) {
     const row = el('button', { className: 'region', attrs: { type: 'button' } });
     row.appendChild(el('span', { className: 'region-flag', text: flagEmoji(item.country) || '🏳️' }));
@@ -164,17 +168,31 @@ function fillList(body, items, { onFocus, showVisitor }) {
     row.appendChild(text);
     row.title = item.regionNames.join(', '); // the full list, for the curious
 
-    if (showVisitor && item.visitors[0]) {
-      const who = el('span', { className: 'region-who' });
-      who.appendChild(colorDot(item.visitors[0].color));
-      who.appendChild(el('span', { text: item.visitors[0].name }));
-      row.appendChild(who);
-    }
+    if (groupSize && item.visitors.length) row.appendChild(visitorTag(item.visitors, groupSize));
 
     // Frame every region of the country that was actually visited.
     row.addEventListener('click', () => onFocus(item.regionIds));
     body.appendChild(row);
   }
+}
+
+/**
+ * Who has been there. One person is worth naming; from two upwards the count
+ * against the group is what you actually want to read — "2 of 3" — with the
+ * dots saying which two and the tooltip spelling it out.
+ */
+function visitorTag(visitors, total) {
+  const who = el('span', { className: 'region-who' });
+  const dots = el('span', { className: 'region-dots' });
+  for (const visitor of visitors) dots.appendChild(colorDot(visitor.color));
+  who.appendChild(dots);
+  who.appendChild(
+    el('span', {
+      text: visitors.length === 1 ? visitors[0].name : `${visitors.length} of ${total}`,
+    })
+  );
+  who.title = visitors.map((v) => v.name).join(', ');
+  return who;
 }
 
 /**

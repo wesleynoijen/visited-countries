@@ -255,9 +255,12 @@ a list it should read as "Spain", not as one row per Spanish region.
 - **"Everyone's been"** = countries every person has set foot in. One region is
   enough: if you went to mainland Spain and someone else only to Ibiza, you have
   both been to Spain.
-- **"Only one of us"** = countries exactly one person has been to.
-- Both counts are subsets of the **Countries** tile at the top, so the numbers
-  line up with the list you are looking at.
+- **"Only some of us"** = the rest — every visited country still missing
+  somebody. With two travellers that means the ones only one of you has seen;
+  with three it also holds the two-out-of-three countries. Each row shows a dot
+  per traveller and says "2 of 3", so you can see at a glance who is missing.
+- The two lists are complements, so together they add up to the **Countries**
+  tile at the top.
 - When only a part or two of a country was visited, the row names them
   ("Spain / Balearic Islands"). Hover any row for the full list of regions, and
   click it to fly to exactly those regions on the map.

@@ -63,18 +63,21 @@ export function buildModel(people, regions) {
   const countries = rollUpToCountries(regions, visitIndex);
   const totalPeople = normPeople.length;
 
-  // Visited by every single person / by exactly one — both per country.
+  // The two lists are complements of each other, per country: everywhere all of
+  // you have been, and everywhere that is still missing somebody. With three
+  // people that second list holds the two-out-of-three countries as well, which
+  // is the point — it is the list of trips you have yet to share.
   const everyone = countries
     .filter((c) => totalPeople > 0 && c.visitors.length === totalPeople)
     .sort(byName);
-  const onlyOne = countries.filter((c) => c.visitors.length === 1).sort(byName);
+  const notEveryone = countries.filter((c) => c.visitors.length < totalPeople).sort(byName);
 
   return {
     people: normPeople,
     visitIndex,
     countries,
     everyone,
-    onlyOne,
+    notEveryone,
     visitedCountries: new Set(countries.map((c) => c.id)),
     totalVisited: visitIndex.size,
     continents: continentStats(regions, visitIndex),

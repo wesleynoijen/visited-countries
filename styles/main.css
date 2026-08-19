@@ -416,7 +416,9 @@ body {
 /* ---- Stats ---------------------------------------------------------------- */
 .stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* One row of equal columns, however many tiles there happen to be. */
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   gap: 10px;
 }
 

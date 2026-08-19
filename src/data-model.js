@@ -79,7 +79,6 @@ export function buildModel(people, regions) {
     everyone,
     notEveryone,
     visitedCountries: new Set(countries.map((c) => c.id)),
-    totalVisited: visitIndex.size,
     continents: continentStats(regions, visitIndex),
     warnings,
   };

@@ -119,7 +119,7 @@ tab. Then open your map and **hard refresh** (`Cmd+Shift+R` on Mac, `Ctrl+F5` on
 Windows), otherwise your browser may show you the cached old version.
 
 Tenerife is now in your colour, mainland Spain and the other six Canaries are
-unchanged, and the "Regions" counter has gone up by one.
+unchanged, and Spain has appeared in the lists on the right.
 
 That's the entire workflow. It's also the security model: anyone can look at the
 map, but only someone who can push to this repository can change what it shows.

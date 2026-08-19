@@ -40,11 +40,6 @@ function renderStats(model, regions) {
       label: 'Countries',
       sub: `of ${regions.countryCount}`,
     },
-    {
-      value: model.totalVisited,
-      label: 'Regions',
-      sub: `of ${regions.list.length}`,
-    },
     { value: model.everyone.length, label: 'Visited by all', sub: 'countries' },
     { value: model.notEveryone.length, label: 'Some of us', sub: 'countries' },
   ];

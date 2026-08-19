@@ -24,7 +24,7 @@ export function renderUI({ model, regions, onFocus }) {
   renderContinents(model);
   renderCountryList('everyone', model.everyone, {
     onFocus,
-    empty: 'No country has been visited by everyone yet.',
+    empty: 'No country has been visited by all of you yet.',
   });
   renderCountryList('notall', model.notEveryone, {
     onFocus,
@@ -35,13 +35,15 @@ export function renderUI({ model, regions, onFocus }) {
 
 function renderStats(model, regions) {
   const stats = [
+    // One family of names, so the row reads as a single sentence and the last
+    // two visibly add up to the first.
     {
       value: model.visitedCountries.size,
-      label: 'Countries',
-      sub: `of ${regions.countryCount}`,
+      label: 'Visited',
+      sub: `of ${regions.countryCount} countries`,
     },
     { value: model.everyone.length, label: 'Visited by all', sub: 'countries' },
-    { value: model.notEveryone.length, label: 'Some of us', sub: 'countries' },
+    { value: model.notEveryone.length, label: 'Visited by some', sub: 'countries' },
   ];
 
   const root = document.getElementById('stats');

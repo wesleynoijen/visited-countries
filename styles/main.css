@@ -449,6 +449,20 @@ body {
   margin-top: 2px;
   font-size: 0.8rem;
   color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Small phones: "Visited by some" needs the padding back to stay on one line. */
+@media (max-width: 420px) {
+  .stat {
+    padding: 14px 6px;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+  }
+  .stat-sub {
+    font-size: 0.68rem;
+  }
 }
 
 .stat-sub {

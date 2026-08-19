@@ -256,15 +256,15 @@ The map works per **region**; the two lists work per **country**. That
 difference is deliberate — a week on Ibiza should colour in Ibiza alone, but in
 a list it should read as "Spain", not as one row per Spanish region.
 
-- **"Everyone's been"** = countries every person has set foot in. One region is
+- **"Visited by all"** = countries every person has set foot in. One region is
   enough: if you went to mainland Spain and someone else only to Ibiza, you have
   both been to Spain.
-- **"Some of us"** = the rest — every visited country still missing
+- **"Visited by some"** = the rest — every visited country still missing
   somebody. With two travellers that means the ones only one of you has seen;
   with three it also holds the two-out-of-three countries. Each row shows a dot
   per traveller and says "2 of 3", so you can see at a glance who is missing.
-- The two lists are complements, so together they add up to the **Countries**
-  tile at the top.
+- The two lists are complements, so their counts add up to the **Visited** tile
+  at the top — which is why the three tiles carry the same names as the lists.
 - When only a part or two of a country was visited, the row names them
   ("Spain / Balearic Islands"). Hover any row for the full list of regions, and
   click it to fly to exactly those regions on the map.

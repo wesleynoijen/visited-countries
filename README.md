@@ -263,8 +263,9 @@ a list it should read as "Spain", not as one row per Spanish region.
   somebody. With two travellers that means the ones only one of you has seen;
   with three it also holds the two-out-of-three countries. Each row shows a dot
   per traveller and says "2 of 3", so you can see at a glance who is missing.
-- The two lists are complements, so their counts add up to the **Visited** tile
-  at the top — which is why the three tiles carry the same names as the lists.
+- The two lists are complements, so their counts add up to the **Visited
+  countries** tile at the top — which is why the tiles carry the same names as
+  the lists.
 - When only a part or two of a country was visited, the row names them
   ("Spain / Balearic Islands"). Hover any row for the full list of regions, and
   click it to fly to exactly those regions on the map.

@@ -460,15 +460,6 @@ body {
   .stat-label {
     font-size: 0.72rem;
   }
-  .stat-sub {
-    font-size: 0.68rem;
-  }
-}
-
-.stat-sub {
-  font-size: 0.72rem;
-  color: var(--text-secondary);
-  opacity: 0.8;
 }
 
 /* ---- People legend -------------------------------------------------------- */

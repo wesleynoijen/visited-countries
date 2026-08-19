@@ -29,7 +29,7 @@ async function main() {
     reportWarnings(model.warnings);
 
     const mapApi = createMap('map', { geojson, model, regions, theme });
-    renderUI({ model, regions, onFocus: (target) => mapApi.focus(target) });
+    renderUI({ model, onFocus: (target) => mapApi.focus(target) });
     createSearch({ regions, model, onPick: (id) => mapApi.focus(regions.spread(id)) });
 
     document.body.classList.add('is-ready');

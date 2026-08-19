@@ -14,12 +14,12 @@
 import { config } from '../data/config.js';
 import { flagEmoji, el, colorDot } from './util.js';
 
-export function renderUI({ model, regions, onFocus }) {
+export function renderUI({ model, onFocus }) {
   document.getElementById('app-title').textContent = config.title;
   document.getElementById('app-subtitle').textContent = config.subtitle;
   document.title = config.title;
 
-  renderStats(model, regions);
+  renderStats(model);
   renderPeople(model);
   renderContinents(model);
   renderCountryList('everyone', model.everyone, {
@@ -33,17 +33,13 @@ export function renderUI({ model, regions, onFocus }) {
   });
 }
 
-function renderStats(model, regions) {
+function renderStats(model) {
+  // One family of names, so the row reads as a single sentence and the last two
+  // visibly add up to the first.
   const stats = [
-    // One family of names, so the row reads as a single sentence and the last
-    // two visibly add up to the first.
-    {
-      value: model.visitedCountries.size,
-      label: 'Visited',
-      sub: `of ${regions.countryCount} countries`,
-    },
-    { value: model.everyone.length, label: 'Visited by all', sub: 'countries' },
-    { value: model.notEveryone.length, label: 'Visited by some', sub: 'countries' },
+    { value: model.visitedCountries.size, label: 'Visited countries' },
+    { value: model.everyone.length, label: 'Visited by all' },
+    { value: model.notEveryone.length, label: 'Visited by some' },
   ];
 
   const root = document.getElementById('stats');
@@ -52,7 +48,6 @@ function renderStats(model, regions) {
     const tile = el('div', { className: 'stat' });
     tile.appendChild(el('span', { className: 'stat-value', text: String(s.value) }));
     tile.appendChild(el('span', { className: 'stat-label', text: s.label }));
-    if (s.sub) tile.appendChild(el('span', { className: 'stat-sub', text: s.sub }));
     root.appendChild(tile);
   }
 }

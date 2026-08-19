@@ -436,10 +436,19 @@ function writeGeometry(admin1, assignments) {
 
   const out = join(ROOT, 'assets', 'world-regions.geojson');
   const built = carveIslands(stitch([
-    { source: coarse, min: 1500 }, // km² — continents and large islands
+    { source: coarse, min: 5000 }, // km² — continents and the largest islands
     { source: fine, min: 10 }, //          islands
     { source: raw, min: 0 }, //            islets and microstates
   ]));
+
+  // Every part of the source has to survive: stitching picks one simplified
+  // twin per part and carving only moves parts between features, so any drop
+  // here means a bug rather than a setting.
+  const partsIn = countParts(raw);
+  const partsOut = countParts(built);
+  if (partsIn !== partsOut) {
+    console.warn(`  ! ${partsIn - partsOut} of ${partsIn} land parts went missing while simplifying`);
+  }
   writeFileSync(out, JSON.stringify(built));
   console.log(`Wrote ${out} — ${built.features.length} features, ${sizeOf(out)}`);
   return built;
@@ -461,28 +470,38 @@ function simplify(input, name, { filter, steps, precision }) {
 /**
  * Rebuild each region from whichever pass suits each of its parts: the mainland
  * from the coarse pass, its islands from the fine one, its islets from the raw
- * one. Passes are listed largest-first and each claims the parts above its
- * threshold that no earlier pass took.
+ * one. Passes are listed largest-first.
+ *
+ * Which pass a part belongs to is decided by its TRUE area, read from the
+ * unsimplified pass — never by how big it measures inside a simplified one.
+ * That distinction is the whole reason this function is not four lines long:
+ * a 4% simplification shrinks a coastline by up to 15%, so classifying each
+ * pass by its own numbers left a gap around every threshold. Fuerteventura,
+ * Zanzibar and Maui all measured under 1,500 km² once coarsened and over it
+ * when fine, so no pass would claim them and they vanished from the map.
  */
 function stitch(passes) {
-  const indexed = passes.map((p) => ({
-    min: p.min,
-    byId: new Map(p.source.features.map((f) => [f.properties.id, f])),
+  const indexed = passes.map((pass) => ({
+    min: pass.min,
+    byId: new Map(pass.source.features.map((f) => [f.properties.id, f])),
   }));
+  // The last pass is unsimplified, so it is the one that still has every part.
+  const detail = indexed[indexed.length - 1];
 
-  const ids = new Set(indexed.flatMap((p) => [...p.byId.keys()]));
+  const ids = new Set(indexed.flatMap((pass) => [...pass.byId.keys()]));
   const features = [];
 
   for (const id of ids) {
-    const rings = [];
-    let ceiling = Infinity;
-    for (const pass of indexed) {
-      for (const part of polygonsOf(pass.byId.get(id))) {
-        const size = geometryArea({ type: 'Polygon', coordinates: part });
-        if (size > pass.min && size <= ceiling) rings.push(part);
-      }
-      ceiling = pass.min;
-    }
+    const parts = polygonsOf(detail.byId.get(id)).map(measurePart);
+    parts.sort((a, b) => b.area - a.area);
+
+    // The same parts as each pass simplified them, waiting to be claimed.
+    const pools = indexed.map((pass) => polygonsOf(pass.byId.get(id)).map(measurePart));
+
+    const rings = parts.map((part) => {
+      const from = indexed.findIndex((pass) => part.area > pass.min);
+      return claimPart(pools, from < 0 ? pools.length - 1 : from, part);
+    });
     if (!rings.length) continue; // reported by verify()
 
     features.push({
@@ -497,6 +516,61 @@ function stitch(passes) {
 
   features.sort((a, b) => a.properties.id.localeCompare(b.properties.id));
   return { type: 'FeatureCollection', features };
+}
+
+/** A polygon with the numbers needed to recognise it again after simplifying. */
+function measurePart(rings) {
+  return {
+    rings,
+    area: geometryArea({ type: 'Polygon', coordinates: rings }),
+    box: boundingBox(rings[0]),
+    taken: false,
+  };
+}
+
+/**
+ * The simplified twin of `part` from pass `from`, or from a finer pass if that
+ * one dropped it. Twins are recognised by overlapping bounding boxes — stable
+ * under simplification, unlike vertex counts or exact coordinates — and each
+ * one can only be claimed once, so neighbouring islets cannot swap shapes.
+ */
+function claimPart(pools, from, part) {
+  for (let i = from; i < pools.length; i++) {
+    let best = null;
+    for (const candidate of pools[i]) {
+      if (candidate.taken || !boxesOverlap(candidate.box, part.box)) continue;
+      const gap = boxDistance(candidate.box, part.box);
+      if (!best || gap < best.gap) best = { candidate, gap };
+    }
+    if (best) {
+      best.candidate.taken = true;
+      return best.candidate.rings;
+    }
+  }
+  return part.rings; // nothing matched: full detail beats losing the part
+}
+
+function boundingBox(ring) {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const [x, y] of ring) {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  return [minX, minY, maxX, maxY];
+}
+
+function boxesOverlap(a, b) {
+  return a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
+}
+
+/** Distance between two boxes' centres — small means "the same island". */
+function boxDistance(a, b) {
+  return Math.hypot((a[0] + a[2] - b[0] - b[2]) / 2, (a[1] + a[3] - b[1] - b[3]) / 2);
 }
 
 /**
@@ -577,6 +651,29 @@ function toGeometry(polygons) {
     : { type: 'MultiPolygon', coordinates: polygons };
 }
 
+/**
+ * Which islands were carved out of which parent, so that writing the parent's
+ * code still means the whole archipelago. `ES-CN` keeps covering the Canaries
+ * even though Tenerife is its own region now; `Tenerife` covers only Tenerife.
+ */
+function islandMembers(ids) {
+  const members = new Map();
+  for (const islands of Object.values(ISLAND_REGIONS)) {
+    for (const island of islands) {
+      if (!ids.has(island.id) || !ids.has(island.parent)) continue;
+      if (!members.has(island.parent)) members.set(island.parent, []);
+      members.get(island.parent).push(island.id);
+    }
+  }
+  for (const list of members.values()) list.sort();
+  return members;
+}
+
+/** How many separate landmasses a collection holds. */
+function countParts(collection) {
+  return collection.features.reduce((total, f) => total + polygonsOf(f).length, 0);
+}
+
 /** Every polygon of a feature, as an array of ring-arrays. */
 function polygonsOf(feature) {
   const geometry = feature?.geometry;
@@ -592,6 +689,8 @@ function writeReference(regions) {
     if (!ids.has(key)) console.warn(`  ! ALIASES has no region "${key}" — check region-rules.mjs`);
   }
 
+  const members = islandMembers(ids);
+
   const payload = regions.map((r) => {
     const entry = {
       id: r.id,
@@ -603,6 +702,7 @@ function writeReference(regions) {
       mainland: r.mainland,
     };
     if (ALIASES[r.id]) entry.aliases = ALIASES[r.id];
+    if (members.has(r.id)) entry.members = members.get(r.id);
     return entry;
   });
   const path = join(ROOT, 'assets', 'regions.json');
@@ -611,6 +711,7 @@ function writeReference(regions) {
 }
 
 function writeMarkdown(regions) {
+  const members = islandMembers(new Set(regions.map((r) => r.id)));
   const byCountry = new Map();
   for (const r of regions) {
     if (!byCountry.has(r.countryName)) byCountry.set(r.countryName, []);
@@ -631,6 +732,10 @@ function writeMarkdown(regions) {
     'the Canaries, Balearics, Ceuta and Melilla stay uncoloured until you add them.',
     'Write `ES*` when you want the whole country, islands included.',
     '',
+    'Some regions have their big islands carved out into regions of their own.',
+    'Their code still covers the whole group, so `ES-CN` is all of the Canaries',
+    'while `ES-TENERIFE` is only Tenerife.',
+    '',
     `${regions.length} regions across ${byCountry.size} countries and territories.`,
     '',
   ];
@@ -642,7 +747,9 @@ function writeMarkdown(regions) {
     lines.push('| --- | --- | --- | --- |');
     for (const r of list.sort((a, b) => a.name.localeCompare(b.name))) {
       const also = (ALIASES[r.id] || []).join(', ');
-      lines.push(`| \`${r.id}\` | ${r.name} | ${r.mainland ? 'yes' : 'no'} | ${also} |`);
+      const group = members.get(r.id);
+      const name = group ? `${r.name} *(+ its ${group.length} named islands)*` : r.name;
+      lines.push(`| \`${r.id}\` | ${name} | ${r.mainland ? 'yes' : 'no'} | ${also} |`);
     }
     lines.push('');
   }

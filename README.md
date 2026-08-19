@@ -8,12 +8,13 @@ It's a **static site** — no database, no backend, no build step to deploy. All
 data lives in code, so the published map only ever changes when you commit.
 Perfect for GitHub Pages.
 
-- 🗺️ **1,003 regions, not just countries.** Mainland Spain, the Canary Islands and
-  the Balearics are three separate things you can colour in — as are Hawaii,
-  Corsica, the Azores, Zanzibar, Sardinia and the Galápagos.
-- 🏝️ **49 Greek islands by name.** Santorini, Mykonos, Rhodes, Corfu, Zakynthos,
-  Kos, Naxos, Paros, Lesbos, Skiathos and the rest are each their own region, so
-  a week on Rhodes colours in Rhodes.
+- 🗺️ **1,014 regions, not just countries.** Mainland Spain, Tenerife and Ibiza
+  are three separate things you can colour in — as are Hawaii, Corsica, the
+  Azores, Zanzibar, Sardinia and the Galápagos.
+- 🏝️ **Holiday islands by name.** All 49 Greek islands worth naming — Santorini,
+  Mykonos, Rhodes, Corfu, Zakynthos, Kos — plus the seven Canaries and the four
+  Balearics, each its own region. A week on Ibiza colours in Ibiza and nothing
+  else.
 - 🇺🇸 **States and provinces** for the USA, Canada, Australia, Brazil, Germany,
   France, Italy, Spain, the UK, the Netherlands, Belgium, Austria, Switzerland,
   Portugal, Greece, Sweden, Norway, Poland, Russia, China, India, Argentina,
@@ -39,21 +40,21 @@ finish. It takes about a minute once you've done it once.
 There are three ways. The first is the easiest, and it works from your phone.
 
 **A. Look it up on your own map.** Open your map, type `Tenerife` in the search
-box at the top and press Enter. The map flies to the Canary Islands and opens a
-popup. At the bottom of that popup is the code:
+box at the top and press Enter. The map flies to Tenerife and opens a popup. At
+the bottom of that popup is the code:
 
 ```
-🇪🇸 Canary Islands
+🇪🇸 Tenerife
 Spain
 Nobody has been here yet.
 ─────────────────────
-code  ES-CN
+code  ES-TENERIFE
 ```
 
-`ES-CN` is what you need. You can also just tap any region on the map directly —
+`ES-TENERIFE` is what you need. You can also just tap any region on the map directly —
 every one of them shows its code, visited or not.
 
-**B. Search [`REGIONS.md`](REGIONS.md).** All 1,003 codes are listed there, grouped
+**B. Search [`REGIONS.md`](REGIONS.md).** All 1,014 codes are listed there, grouped
 by country. Press `Ctrl+F` / `Cmd+F` and search for the place or the country. Each
 row tells you the code, the name, whether it counts as mainland, and the other
 names it answers to.
@@ -82,9 +83,9 @@ Add the new place to the list. All three of these lines do exactly the same
 thing, so use whichever you'll remember:
 
 ```js
-      'ES-CN',                 // the code
-      'Canary Islands',        // the English name
-      'Tenerife',              // the island you actually stayed on
+      'ES-TENERIFE',   // the code
+      'Tenerife',      // the name
+      'tenerife',      // capitals and accents are ignored
 ```
 
 The result:
@@ -93,12 +94,12 @@ The result:
     countries: [
       'NL',
       'ES',
-      'ES-CN',   // ← new
+      'Tenerife',   // ← new
     ],
 ```
 
-Order doesn't matter, duplicates are harmless, and capitals and accents are
-ignored — `'tenerife'`, `'Tenerife'` and `'Canarische Eilanden'` all work.
+Order doesn't matter and duplicates are harmless. If you island-hopped the whole
+archipelago, `'ES-CN'` colours all seven Canaries at once.
 
 ### Step 3 — Commit and push
 
@@ -114,8 +115,8 @@ GitHub Pages rebuilds in a minute or two — you can watch it under the **Action
 tab. Then open your map and **hard refresh** (`Cmd+Shift+R` on Mac, `Ctrl+F5` on
 Windows), otherwise your browser may show you the cached old version.
 
-The Canary Islands are now in your colour, mainland Spain is unchanged, and the
-"Regions" counter has gone up by one.
+Tenerife is now in your colour, mainland Spain and the other six Canaries are
+unchanged, and the "Regions" counter has gone up by one.
 
 That's the entire workflow. It's also the security model: anyone can look at the
 map, but only someone who can push to this repository can change what it shows.
@@ -129,14 +130,20 @@ only.** Anything that sits off on its own is a separate place you have to earn.
 | --- | --- |
 | `'ES'` | **Mainland Spain only.** The Canaries, Balearics, Ceuta and Melilla stay grey. |
 | `'ES*'` | The whole of Spain, islands and overseas territories included. |
-| `'ES-CN'` | Just the Canary Islands (ISO 3166-2 code). |
-| `'Tenerife'` | The same thing, by name or nickname — case and accents are ignored. |
-| `'Canarische Eilanden'` | Also the same thing; common Dutch names work too. |
+| `'ES-CN'` | All seven Canary Islands (ISO 3166-2 code). |
+| `'Canarische Eilanden'` | The same thing; common Dutch names work too. |
+| `'Tenerife'` | **Only Tenerife** — the other six stay grey. |
+| `'ES-TENERIFE'` | The same thing, by code. |
 
 So `'US'` is the contiguous states plus DC — Alaska (`US-AK`) and Hawaii
 (`US-HI`) are separate. `'PT'` is mainland Portugal, not the Azores (`PT-20`) or
 Madeira (`PT-30`). `'GR'` is Greece's 14 peripheries, so Santorini and Rhodes are
 yours to add by name.
+
+A handful of codes cover a **group**: the ones with named islands carved out of
+them. `'ES-CN'` is all of the Canaries, `'ES-IB'` all of the Balearics, `'GR-L'`
+the whole South Aegean including Santorini and Mykonos. Writing the island's own
+name always means that island alone.
 
 ### Recipes
 
@@ -145,7 +152,8 @@ yours to add by name.
 | A country that isn't split up — Bulgaria, Thailand, the UAE | `'BG'`, `'TH'`, `'AE'` |
 | Only the part of a country you actually saw | `'ES-AN'` (Andalusia), `'IT-82'` (Sicily), `'US-NY'` (New York) |
 | A whole country including its islands | `'ES*'`, `'US*'`, `'PT*'` |
-| An island group on its own | `'ES-CN'`, `'PT-20'`, `'FR-COR'`, `'EC-W'` (Galápagos) |
+| A whole island group | `'ES-CN'` (all the Canaries), `'ES-IB'` (all the Balearics), `'PT-20'`, `'FR-COR'`, `'EC-W'` (Galápagos) |
+| One island of a group | `'Tenerife'`, `'Ibiza'`, `'Mallorca'`, `'Lanzarote'` — or their codes, `'ES-TENERIFE'` and friends |
 | A single Greek island | `'Santorini'`, `'Rhodes'`, `'Corfu'`, `'Mykonos'` — or their codes, `'GR-SANTORINI'` and friends |
 | A city you visited | the region it's in: `'FR-IDF'` for Paris, `'TR-34'` for Istanbul — or simply write `'Paris'` or `'Istanbul'`, which resolve to those regions |
 
@@ -170,7 +178,7 @@ their colours, so the Netherlands above ends up striped blue/green/orange.
 
 | What you see | What it means |
 | --- | --- |
-| A place stayed grey | The code didn't match anything. Open the browser console (`F12` → Console) — every skipped entry is listed with the closest matches, so a typo is obvious: <br>`• Wesley: "Tenrife"  — did you mean: Canary Islands (ES-CN)?` |
+| A place stayed grey | The code didn't match anything. Open the browser console (`F12` → Console) — every skipped entry is listed with the closest matches, so a typo is obvious: <br>`• Wesley: "Tenrife"  — did you mean: Tenerife (ES-TENERIFE)?` |
 | Too much got coloured in | You used a bare country code for a country that's split into regions. `'TR'` colours all 81 Turkish provinces; use `'TR-34'` for Istanbul alone. |
 | An island stayed grey | That's by design — bare country codes are mainland only. Add the island's own code, or use the `*` form. |
 | Nothing changed at all | Either Pages hasn't finished rebuilding (check the **Actions** tab) or your browser cached the old files (hard refresh). |
@@ -220,7 +228,7 @@ src/
   ui.js                  # header, stats, continent bars, legend, lists
   util.js                # small helpers (flags, name folding, dots)
 assets/
-  world-regions.geojson  # the 1,003 region shapes, keyed by region id
+  world-regions.geojson  # the 1,014 region shapes, keyed by region id
   regions.json           # names, countries, continents, aliases
   leaflet/               # vendored Leaflet (no CDN dependency)
 tools/
@@ -303,13 +311,21 @@ So the build makes three passes and stitches them back together by part size:
 
 | Pass | Setting | Supplies |
 | --- | --- | --- |
-| Coarse | 4% of vertices, rounded to 0.004° | parts over 1,500 km² — continents, big islands |
-| Fine | fixed 900 m tolerance | parts from 10 to 1,500 km² — ordinary islands |
+| Coarse | 4% of vertices, rounded to 0.004° | parts over 5,000 km² — continents and the largest islands |
+| Fine | fixed 900 m tolerance | parts from 10 to 5,000 km² — ordinary islands |
 | Raw | no simplification, rounded to 0.0002° | anything smaller — islets and microstates |
 
-Each region is then rebuilt from whichever pass suits each of its parts. That is
-why the South Aegean keeps all 35 of its islands and the Vatican still exists,
-at 1.7 MB total (about 470 KB over the wire).
+Each region is then rebuilt from whichever pass suits each of its parts. Which
+pass a part belongs to is decided by its **true** area, measured before any
+simplification — never by how big it measures inside a simplified pass. Coarsening
+shrinks a coastline by up to 15%, so classifying per pass left a gap around the
+threshold that swallowed whole islands: Fuerteventura, Zanzibar and Maui each
+measured under the cutoff when coarse and over it when fine, so no pass claimed
+them. The build now counts land parts in and out and complains if the numbers
+differ.
+
+That is why the South Aegean keeps all 35 of its islands and the Vatican still
+exists, at 2.2 MB total (about 590 KB over the wire).
 
 ## 📦 Data & credits
 

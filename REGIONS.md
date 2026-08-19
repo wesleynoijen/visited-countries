@@ -11,7 +11,11 @@ A bare country code means **the mainland only**: `ES` is mainland Spain, and
 the Canaries, Balearics, Ceuta and Melilla stay uncoloured until you add them.
 Write `ES*` when you want the whole country, islands included.
 
-1003 regions across 251 countries and territories.
+Some regions have their big islands carved out into regions of their own.
+Their code still covers the whole group, so `ES-CN` is all of the Canaries
+while `ES-TENERIFE` is only Tenerife.
+
+1014 regions across 251 countries and territories.
 
 ## Afghanistan
 
@@ -661,19 +665,19 @@ Write `ES*` when you want the whole country, islands included.
 | `GR-ANDROS` | Andros | no |  |
 | `GR-ANTIPAROS` | Antiparos | no |  |
 | `GR-ASTYPALAIA` | Astypalaia | no |  |
-| `GR-A1` | Attica | yes | Athene |
-| `GR-H` | Central Greece | yes |  |
+| `GR-A1` | Attica *(+ its 5 named islands)* | yes | Athene |
+| `GR-H` | Central Greece *(+ its 2 named islands)* | yes |  |
 | `GR-B` | Centre Macedonia | yes |  |
 | `GR-CHIOS` | Chios | no |  |
 | `GR-CORFU` | Corfu | no | Kerkyra, Korfoe |
 | `GR-M` | Crete | yes | Crete, Kriti, Heraklion, Kreta |
-| `GR-A` | East Macedonia and Thrace | yes |  |
+| `GR-A` | East Macedonia and Thrace *(+ its 2 named islands)* | yes |  |
 | `GR-D` | Epirus | yes |  |
 | `GR-EVIA` | Evia | no | Euboea, Evvoia |
 | `GR-FOLEGANDROS` | Folegandros | no |  |
 | `GR-HYDRA` | Hydra | no | Ydra |
 | `GR-IKARIA` | Ikaria | no |  |
-| `GR-F` | Ionian Islands | yes |  |
+| `GR-F` | Ionian Islands *(+ its 6 named islands)* | yes |  |
 | `GR-IOS` | Ios | no |  |
 | `GR-ITHACA` | Ithaca | no | Ithaki |
 | `GR-KALYMNOS` | Kalymnos | no |  |
@@ -692,7 +696,7 @@ Write `ES*` when you want the whole country, islands included.
 | `GR-MYKONOS` | Mykonos | no |  |
 | `GR-NAXOS` | Naxos | no |  |
 | `GR-NISYROS` | Nisyros | no |  |
-| `GR-K` | North Aegean | yes |  |
+| `GR-K` | North Aegean *(+ its 5 named islands)* | yes |  |
 | `GR-PAROS` | Paros | no |  |
 | `GR-PATMOS` | Patmos | no |  |
 | `GR-PAXOS` | Paxos | no | Paxi |
@@ -707,12 +711,12 @@ Write `ES*` when you want the whole country, islands included.
 | `GR-SKIATHOS` | Skiathos | no |  |
 | `GR-SKOPELOS` | Skopelos | no |  |
 | `GR-SKYROS` | Skyros | no |  |
-| `GR-L` | South Aegean | yes | Zuid-Egeïsche Eilanden, Rhodos, Santorini, Mykonos, Kos |
+| `GR-L` | South Aegean *(+ its 26 named islands)* | yes | Zuid-Egeïsche Eilanden, Rhodos, Santorini, Mykonos, Kos |
 | `GR-SPETSES` | Spetses | no |  |
 | `GR-SYMI` | Symi | no | Simi |
 | `GR-SYROS` | Syros | no | Ermoupoli |
 | `GR-THASOS` | Thasos | no | Thassos |
-| `GR-E` | Thessalia | yes |  |
+| `GR-E` | Thessalia *(+ its 3 named islands)* | yes |  |
 | `GR-TILOS` | Tilos | no |  |
 | `GR-TINOS` | Tinos | no |  |
 | `GR-G` | West Greece | yes |  |
@@ -1834,21 +1838,32 @@ Write `ES*` when you want the whole country, islands included.
 | `ES-AN` | Andalusia | yes | Andalucía, Andalucia, Malaga, Sevilla, Andalusië |
 | `ES-AR` | Aragon | yes |  |
 | `ES-AS` | Asturias | yes |  |
-| `ES-IB` | Balearic Islands | no | Baleares, Mallorca, Majorca, Menorca, Ibiza, Formentera, Balearen |
+| `ES-IB` | Balearic Islands *(+ its 4 named islands)* | no | Baleares, Islas Baleares, Balearen |
 | `ES-PV` | Basque Country | yes | Euskadi, Pais Vasco, Bilbao, Baskenland |
-| `ES-CN` | Canary Islands | no | Canarias, Tenerife, Gran Canaria, Lanzarote, Fuerteventura, La Palma, Canarische Eilanden |
+| `ES-CN` | Canary Islands *(+ its 7 named islands)* | no | Canarias, Islas Canarias, Canarische Eilanden |
 | `ES-CB` | Cantabria | yes |  |
 | `ES-CL` | Castile and León | yes |  |
 | `ES-CM` | Castilla-La Mancha | yes |  |
 | `ES-CT` | Catalonia | yes | Cataluña, Catalunya, Barcelona, Catalonië |
 | `ES-CE` | Ceuta | no |  |
+| `ES-ELHIERRO` | El Hierro | no |  |
 | `ES-EX` | Extremadura | yes |  |
+| `ES-FORMENTERA` | Formentera | no |  |
+| `ES-FUERTEVENTURA` | Fuerteventura | no |  |
 | `ES-GA` | Galicia | yes | Galicië |
+| `ES-GRANCANARIA` | Gran Canaria | no | Las Palmas, Maspalomas |
+| `ES-IBIZA` | Ibiza | no | Eivissa |
+| `ES-LAGOMERA` | La Gomera | no |  |
+| `ES-LAPALMA` | La Palma | no |  |
 | `ES-RI` | La Rioja | yes |  |
+| `ES-LANZAROTE` | Lanzarote | no |  |
 | `ES-MD` | Madrid | yes | Comunidad de Madrid |
+| `ES-MALLORCA` | Mallorca | no | Majorca, Palma de Mallorca |
 | `ES-ML` | Melilla | no |  |
+| `ES-MENORCA` | Menorca | no | Minorca, Mahon, Maó |
 | `ES-MC` | Murcia | yes |  |
 | `ES-NC` | Navarre | yes |  |
+| `ES-TENERIFE` | Tenerife | no |  |
 | `ES-VC` | Valencia | yes | Comunidad Valenciana, Benidorm |
 
 ## Sri Lanka

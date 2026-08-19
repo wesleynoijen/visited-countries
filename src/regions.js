@@ -11,6 +11,10 @@
 //    'ES-CN'   one specific region, by its ISO 3166-2 code
 //    'Tenerife'  a region by name or nickname (case and accents ignored)
 //
+//  A few regions have named islands carved out of them — the Canaries, the
+//  Balearics, the Greek peripheries. Their code still covers the whole group,
+//  so 'ES-CN' is all seven Canary Islands while 'Tenerife' is just Tenerife.
+//
 //  Unknown codes never fail silently: they come back as warnings with the
 //  closest matches, so a typo is easy to spot in the browser console.
 // =============================================================================
@@ -66,7 +70,7 @@ export async function loadRegions(url) {
 
     // An exact region code always wins — 'TH' is Thailand, 'ES-CN' the Canaries.
     const exact = byId.get(code);
-    if (exact) return { regions: [exact], kind: 'region' };
+    if (exact) return { regions: withMembers(exact), kind: exact.members ? 'group' : 'region' };
 
     // A country code on its own means everything attached to the mainland.
     const inCountry = byCountry.get(code);
@@ -76,9 +80,23 @@ export async function loadRegions(url) {
     }
 
     const named = byName.get(foldName(raw));
-    if (named) return { regions: [named], kind: 'name' };
+    if (named) return { regions: withMembers(named), kind: 'name' };
 
     return null;
+  }
+
+  /** A region plus the islands carved out of it, if it has any. */
+  function withMembers(region) {
+    if (!region.members) return [region];
+    const parts = region.members.map((id) => byId.get(id)).filter(Boolean);
+    return [region, ...parts];
+  }
+
+  /** The ids a single code paints — used to frame a whole group on the map. */
+  function spread(id) {
+    const region = byId.get(normalizeCode(id));
+    if (!region) return [];
+    return [region.id, ...(region.members || [])];
   }
 
   /** Regions whose name, nickname or code look like `input` — used on typos. */
@@ -130,6 +148,7 @@ export async function loadRegions(url) {
     countryNames,
     expand,
     suggest,
+    spread,
     get: (id) => byId.get(normalizeCode(id)) || null,
     /** How many distinct countries the whole dataset covers. */
     countryCount: byCountry.size,

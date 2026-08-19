@@ -253,6 +253,17 @@ function popupNode(id, model, regions) {
     wrap.appendChild(el('div', { className: 'popup-sub', text: region.countryName }));
   }
 
+  // Clicking a stray Canary islet shows "Canary Islands", which would be
+  // puzzling without saying that the big ones have their own entry.
+  if (region?.members?.length) {
+    wrap.appendChild(
+      el('div', {
+        className: 'popup-sub',
+        text: `${region.members.length} of its islands are separate regions`,
+      })
+    );
+  }
+
   if (visitors && visitors.length) {
     const people = el('div', { className: 'popup-people' });
     for (const v of visitors) {

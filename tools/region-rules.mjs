@@ -148,8 +148,10 @@ export const FORCE_REGIONS = {
  * genuinely different names, island names and legacy ISO alpha-2 codes.
  */
 export const ALIASES = {
-  'ES-CN': ['Canarias', 'Tenerife', 'Gran Canaria', 'Lanzarote', 'Fuerteventura', 'La Palma'],
-  'ES-IB': ['Baleares', 'Mallorca', 'Majorca', 'Menorca', 'Ibiza', 'Formentera'],
+  // The islands themselves are separate regions now, so their names live with
+  // them below. These two stay as the archipelago-wide shorthand.
+  'ES-CN': ['Canarias', 'Islas Canarias'],
+  'ES-IB': ['Baleares', 'Islas Baleares'],
   'ES-CT': ['Cataluña', 'Catalunya', 'Barcelona'],
   'ES-AN': ['Andalucía', 'Andalucia', 'Malaga', 'Sevilla'],
   'ES-PV': ['Euskadi', 'Pais Vasco', 'Bilbao'],
@@ -288,8 +290,9 @@ export const CLUSTER_DISTANCE_KM = 80;
 //  build warns if it ever stops landing inside a shape — that is the check that
 //  keeps a name attached to the right rock.
 //
-//  Everything not listed here stays with its periphery: `GR-L` still covers the
-//  South Aegean islands that have no entry of their own.
+//  Everything not listed here stays with its parent, and the parent's own code
+//  keeps covering the whole group: `ES-CN` is still all of the Canaries, while
+//  `Tenerife` is only Tenerife.
 // =============================================================================
 
 export const ISLAND_REGIONS = {
@@ -356,6 +359,25 @@ export const ISLAND_REGIONS = {
     // --- Thracian Sea ---------------------------------------------------------
     { id: 'GR-THASOS', name: 'Thasos', parent: 'GR-A', at: [24.683, 40.686], aliases: ['Thassos'] },
     { id: 'GR-SAMOTHRACE', name: 'Samothrace', parent: 'GR-A', at: [25.585, 40.456], aliases: ['Samothraki'] },
+  ],
+
+  ESP: [
+    // --- Canary Islands -------------------------------------------------------
+    { id: 'ES-TENERIFE', name: 'Tenerife', parent: 'ES-CN', at: [-16.548, 28.309] },
+    { id: 'ES-FUERTEVENTURA', name: 'Fuerteventura', parent: 'ES-CN', at: [-14.104, 28.344] },
+    { id: 'ES-GRANCANARIA', name: 'Gran Canaria', parent: 'ES-CN', at: [-15.564, 27.976], aliases: ['Las Palmas', 'Maspalomas'] },
+    { id: 'ES-LANZAROTE', name: 'Lanzarote', parent: 'ES-CN', at: [-13.631, 29.031] },
+    { id: 'ES-LAPALMA', name: 'La Palma', parent: 'ES-CN', at: [-17.848, 28.679] },
+    { id: 'ES-LAGOMERA', name: 'La Gomera', parent: 'ES-CN', at: [-17.217, 28.107] },
+    { id: 'ES-ELHIERRO', name: 'El Hierro', parent: 'ES-CN', at: [-17.99, 27.741] },
+    // La Graciosa and the other islets north of Lanzarote stay with ES-CN.
+
+    // --- Balearic Islands -----------------------------------------------------
+    { id: 'ES-MALLORCA', name: 'Mallorca', parent: 'ES-IB', at: [2.983, 39.593], aliases: ['Majorca', 'Palma de Mallorca'] },
+    { id: 'ES-MENORCA', name: 'Menorca', parent: 'ES-IB', at: [4.078, 39.974], aliases: ['Minorca', 'Mahon', 'Maó'] },
+    { id: 'ES-IBIZA', name: 'Ibiza', parent: 'ES-IB', at: [1.413, 38.973], aliases: ['Eivissa'] },
+    { id: 'ES-FORMENTERA', name: 'Formentera', parent: 'ES-IB', at: [1.471, 38.683] },
+    // Cabrera, south of Mallorca, stays with ES-IB.
   ],
 };
 

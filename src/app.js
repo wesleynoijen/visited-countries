@@ -26,7 +26,7 @@ async function main() {
 
     const mapApi = createMap('map', { geojson, model, regions });
     renderUI({ model, regions, onFocus: (target) => mapApi.focus(target) });
-    createSearch({ regions, model, onPick: (id) => mapApi.focus(id) });
+    createSearch({ regions, model, onPick: (id) => mapApi.focus(regions.spread(id)) });
 
     document.body.classList.add('is-ready');
   } catch (err) {

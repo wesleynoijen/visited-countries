@@ -12,17 +12,21 @@
 //
 //  WHAT YOU CAN WRITE IN `countries`
 //  ---------------------------------
-//  The map is built from ~950 REGIONS, not just countries, so you can colour in
-//  exactly where you have been:
+//  The map is built from ~1,000 REGIONS, not just countries, so you can colour
+//  in exactly where you have been:
 //
 //      'ES'        mainland Spain — the Canaries, Balearics, Ceuta and Melilla
 //                  stay grey until you add them yourself
 //      'ES*'       the whole of Spain, islands and all (note the star)
-//      'ES-CN'     one region by its ISO 3166-2 code (the Canary Islands)
+//      'ES-CN'     one region by its ISO 3166-2 code (all seven Canaries)
 //      'Tenerife'  a region by name or nickname — case and accents are ignored
 //
-//  So a holiday in Tenerife colours in the Canaries and nothing else, and a
-//  road trip through Andalusia can be just 'ES-AN'.
+//  So a holiday in Tenerife colours in Tenerife and nothing else, a week on
+//  Ibiza leaves Mallorca grey, and a road trip through Andalusia is 'ES-AN'.
+//
+//  Islands with a name of their own: the seven Canaries, the four Balearics and
+//  49 Greek islands. The archipelago's own code still covers the whole group,
+//  so 'ES-CN' is all of the Canaries and 'ES-IB' all of the Balearics.
 //
 //  Countries that are split into states or provinces: the USA, Canada,
 //  Australia, Brazil, Germany, France, Italy, Spain, the UK, the Netherlands,
@@ -72,7 +76,8 @@ export const people = [
       'BE',
       'DE',
       'FR', // mainland France; add 'FR-COR' for Corsica
-      'ES', // mainland Spain; add 'ES-CN' for the Canaries, 'ES-IB' for Mallorca & Ibiza
+      'ES', // mainland Spain; add 'Tenerife', 'Ibiza', 'Mallorca'… by name, or
+      //      'ES-CN' / 'ES-IB' for a whole archipelago at once
       'PL',
       'CZ',
       'BG',

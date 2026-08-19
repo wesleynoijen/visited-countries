@@ -1,7 +1,10 @@
 // =============================================================================
 //  Renders everything that is not the map: header, statistics, the per-
 //  continent progress bars, the traveller legend and the two lists.
-//  Tapping any row focuses that region on the map (via the onFocus callback).
+//
+//  The two lists are per COUNTRY, not per region: one "Netherlands" row rather
+//  than twelve provinces. Tapping a row still frames exactly the regions that
+//  were coloured in, so Spain zooms to Ibiza alone if that is all you visited.
 // =============================================================================
 
 import { config } from '../data/config.js';
@@ -15,14 +18,14 @@ export function renderUI({ model, regions, onFocus }) {
   renderStats(model, regions);
   renderPeople(model);
   renderContinents(model);
-  renderRegionList('everyone', model.everyone, {
+  renderCountryList('everyone', model.everyone, {
     onFocus,
-    empty: 'No region has been visited by everyone yet.',
+    empty: 'No country has been visited by everyone yet.',
   });
-  renderRegionList('onlyone', model.onlyOne, {
+  renderCountryList('onlyone', model.onlyOne, {
     onFocus,
     showVisitor: true,
-    empty: 'No region has been visited by exactly one person.',
+    empty: 'No country has been visited by exactly one person.',
   });
 }
 
@@ -38,8 +41,8 @@ function renderStats(model, regions) {
       label: 'Regions',
       sub: `of ${regions.list.length}`,
     },
-    { value: model.everyone.length, label: 'Visited by all' },
-    { value: model.onlyOne.length, label: 'Unique to one' },
+    { value: model.everyone.length, label: 'Visited by all', sub: 'countries' },
+    { value: model.onlyOne.length, label: 'Unique to one', sub: 'countries' },
   ];
 
   const root = document.getElementById('stats');
@@ -116,7 +119,7 @@ function renderContinents(model) {
 /** How many rows to show before collapsing a list behind a button. */
 const LIST_PREVIEW = 25;
 
-function renderRegionList(sectionId, items, { onFocus, showVisitor = false, empty }) {
+function renderCountryList(sectionId, items, { onFocus, showVisitor = false, empty }) {
   const section = document.getElementById(sectionId);
   section.querySelector('.list-count').textContent = String(items.length);
   const body = section.querySelector('.list-body');
@@ -127,8 +130,8 @@ function renderRegionList(sectionId, items, { onFocus, showVisitor = false, empt
     return;
   }
 
-  // Once a country is split into provinces a list can run to a few hundred
-  // rows, which buries everything below it. Show a sensible slice by default.
+  // Well-travelled people still reach a hundred rows, which buries everything
+  // below the list. Show a sensible slice by default.
   if (items.length > LIST_PREVIEW) {
     const shown = items.slice(0, LIST_PREVIEW);
     fillList(body, shown, { onFocus, showVisitor });
@@ -156,10 +159,10 @@ function fillList(body, items, { onFocus, showVisitor }) {
 
     const text = el('span', { className: 'region-text' });
     text.appendChild(el('span', { className: 'region-name', text: item.name }));
-    if (item.name !== item.countryName) {
-      text.appendChild(el('span', { className: 'region-country', text: item.countryName }));
-    }
+    const detail = detailLine(item);
+    if (detail) text.appendChild(el('span', { className: 'region-country', text: detail }));
     row.appendChild(text);
+    row.title = item.regionNames.join(', '); // the full list, for the curious
 
     if (showVisitor && item.visitors[0]) {
       const who = el('span', { className: 'region-who' });
@@ -168,7 +171,23 @@ function fillList(body, items, { onFocus, showVisitor }) {
       row.appendChild(who);
     }
 
-    row.addEventListener('click', () => onFocus(item.id));
+    // Frame every region of the country that was actually visited.
+    row.addEventListener('click', () => onFocus(item.regionIds));
     body.appendChild(row);
   }
+}
+
+/**
+ * Which bit of the country was coloured in — but only when the answer is short
+ * enough to earn its line. 'Spain / Ibiza' is worth saying; 'Netherlands /
+ * Drenthe, Flevoland, Friesland…' is noise, and the row tooltip has it all.
+ */
+const PARTS_SHOWN = 3;
+
+function detailLine(item) {
+  const names = item.regionNames;
+  if (names.length > PARTS_SHOWN) return '';
+  // One region that IS the country ('United Arab Emirates') says nothing new.
+  if (names.length === 1 && names[0] === item.countryName) return '';
+  return names.join(', ');
 }

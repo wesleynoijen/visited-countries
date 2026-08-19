@@ -513,6 +513,11 @@ body {
 .region-country {
   font-size: 0.78rem;
   color: var(--text-secondary);
+  /* Names the parts of a country that were visited — one line, ellipsised;
+     the row's tooltip carries the full list. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .region-who {

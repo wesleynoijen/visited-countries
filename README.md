@@ -20,7 +20,8 @@ Perfect for GitHub Pages.
   Mexico, South Africa, Indonesia, Japan, Turkey and Kazakhstan.
 - 🔎 **Search** any of them by name, nickname or code — in English or Dutch.
 - 📊 Per-continent progress bars, plus lists of where **everyone** has been and
-  where only **one** of you has been.
+  where only **one** of you has been — counted **per country**, so a trip
+  through the Netherlands is one row, not twelve provinces.
 - 🎨 Per-person colours; **diagonal stripes** where people overlap.
 - 📱 Mobile-first, Apple-inspired design; responsive two-column layout on
   larger screens.
@@ -229,13 +230,29 @@ styles/main.css          # Apple-inspired, mobile-first styling
 REGIONS.md               # generated reference of every code
 ```
 
-- **"Everyone's been"** = the *intersection* — regions every person has visited.
-- **"Only one of us"** = regions visited by *exactly one* person.
+### The map
+
 - A region visited by 2+ people is filled with diagonal stripes of each
   visitor's colour; a single visitor gets a solid fill.
 - The basemap is split into two layers, with your colours sandwiched between
   them, so place names stay readable on top of a filled-in region — the same
   stacking Google Maps uses.
+
+### The two lists
+
+The map works per **region**; the two lists work per **country**. That
+difference is deliberate — a week on Ibiza should colour in Ibiza alone, but in
+a list it should read as "Spain", not as one row per Spanish region.
+
+- **"Everyone's been"** = countries every person has set foot in. One region is
+  enough: if you went to mainland Spain and someone else only to Ibiza, you have
+  both been to Spain.
+- **"Only one of us"** = countries exactly one person has been to.
+- Both counts are subsets of the **Countries** tile at the top, so the numbers
+  line up with the list you are looking at.
+- When only a part or two of a country was visited, the row names them
+  ("Spain / Balearic Islands"). Hover any row for the full list of regions, and
+  click it to fly to exactly those regions on the map.
 
 ## 🛠️ Regenerating the map data
 

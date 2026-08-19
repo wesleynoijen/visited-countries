@@ -21,7 +21,7 @@ const L = window.L;
 /**
  * @param {string} containerId id of the map element
  * @param {{geojson: object, regions: object, model: object}} deps
- * @returns {{map: object, focus: (id: string) => void, highlight: (id: string) => void}}
+ * @returns {{map: object, focus: (target: string|string[]) => void}}
  */
 export function createMap(containerId, { geojson, model, regions }) {
   const cfg = config;
@@ -137,45 +137,63 @@ export function createMap(containerId, { geojson, model, regions }) {
   setTimeout(refresh, 0);
 
   let flashTimer = null;
-  let flashed = null;
+  let flashed = [];
 
   /**
    * Fly to a region, outline it and open its popup. The outline matters most
    * for places nobody has visited: without it you would arrive at the Canaries
    * and see nothing but ocean and a popup.
+   *
+   * Accepts a list of ids too. The country lists in the sidebar use that to
+   * frame everything you coloured in there at once — click "Spain" after a
+   * week on Ibiza and you land on Ibiza, not on Madrid.
+   *
+   * @param {string|string[]} target one region id, or several
    */
-  function focus(id) {
-    const lyr = layersById.get(id);
-    if (!lyr) return;
+  function focus(target) {
+    const ids = (Array.isArray(target) ? target : [target]).filter((id) => layersById.has(id));
+    if (!ids.length) return;
 
     clearFlash();
-    lyr.setStyle({
-      stroke: true,
-      weight: cfg.style.focusWeight,
-      color: cfg.style.focusColor,
-      fillOpacity: model.visitIndex.has(id) ? cfg.style.fillOpacity : cfg.style.hoverFillOpacity,
-    });
-    lyr.bringToFront();
-    flashed = { lyr, id };
+    const bounds = L.latLngBounds([]);
+    for (const id of ids) {
+      const lyr = layersById.get(id);
+      lyr.setStyle({
+        stroke: true,
+        weight: cfg.style.focusWeight,
+        color: cfg.style.focusColor,
+        fillOpacity: model.visitIndex.has(id) ? cfg.style.fillOpacity : cfg.style.hoverFillOpacity,
+      });
+      lyr.bringToFront();
+      bounds.extend(lyr.getBounds());
+      flashed.push({ lyr, id });
+    }
     flashTimer = setTimeout(clearFlash, cfg.style.focusFlashMs);
 
-    map.flyToBounds(lyr.getBounds(), {
+    map.flyToBounds(bounds, {
       maxZoom: cfg.map.focusMaxZoom,
       padding: [32, 32],
       duration: 0.8,
     });
-    // moveend covers the usual case; the timeout covers picking the region you
-    // are already looking at, where the map never actually moves.
-    map.once('moveend', () => lyr.openPopup());
-    setTimeout(() => lyr.openPopup(), 900);
+
+    // A popup only makes sense for a single region — picking one of twelve
+    // provinces to speak for the whole country would be arbitrary.
+    if (ids.length === 1) {
+      const lyr = layersById.get(ids[0]);
+      // moveend covers the usual case; the timeout covers picking the region
+      // you are already looking at, where the map never actually moves.
+      map.once('moveend', () => lyr.openPopup());
+      setTimeout(() => lyr.openPopup(), 900);
+    }
   }
 
   function clearFlash() {
     clearTimeout(flashTimer);
-    if (!flashed) return;
-    flashed.lyr.setStyle(styleFor(flashed.id, model, cfg));
-    restoreStripe(flashed.lyr, flashed.id);
-    flashed = null;
+    for (const { lyr, id } of flashed) {
+      lyr.setStyle(styleFor(id, model, cfg));
+      restoreStripe(lyr, id);
+    }
+    flashed = [];
   }
 
   return { map, focus };

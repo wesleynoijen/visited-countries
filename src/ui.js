@@ -46,7 +46,7 @@ function renderStats(model, regions) {
       sub: `of ${regions.list.length}`,
     },
     { value: model.everyone.length, label: 'Visited by all', sub: 'countries' },
-    { value: model.notEveryone.length, label: 'Only some of us', sub: 'countries' },
+    { value: model.notEveryone.length, label: 'Some of us', sub: 'countries' },
   ];
 
   const root = document.getElementById('stats');

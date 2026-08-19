@@ -26,6 +26,8 @@ Perfect for GitHub Pages.
 - 🎨 Per-person colours; **diagonal stripes** where people overlap.
 - 📱 Mobile-first, Apple-inspired design; responsive two-column layout on
   larger screens.
+- 🌓 Light and dark. Follows your system setting, with a toggle in the header
+  that remembers what you picked — the basemap switches with it.
 - 🆓 No paid APIs and no API keys. Leaflet and the map shapes are bundled
   locally; the only external request is the free CARTO basemap — and your
   coloured-in regions still render without it.
@@ -224,6 +226,7 @@ src/
   data-model.js          # builds the visit index, the lists and the stats
   map.js                 # Leaflet map, region fills, hover, popups
   search.js              # the search box
+  theme.js               # light/dark, the toggle and what it remembers
   patterns.js            # SVG diagonal-stripe patterns for shared regions
   ui.js                  # header, stats, continent bars, legend, lists
   util.js                # small helpers (flags, name folding, dots)
@@ -255,7 +258,7 @@ a list it should read as "Spain", not as one row per Spanish region.
 - **"Everyone's been"** = countries every person has set foot in. One region is
   enough: if you went to mainland Spain and someone else only to Ibiza, you have
   both been to Spain.
-- **"Only some of us"** = the rest — every visited country still missing
+- **"Some of us"** = the rest — every visited country still missing
   somebody. With two travellers that means the ones only one of you has seen;
   with three it also holds the two-out-of-three countries. Each row shows a dot
   per traveller and says "2 of 3", so you can see at a glance who is missing.

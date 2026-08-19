@@ -9,6 +9,7 @@ import { people } from '../data/people.js';
 import { loadRegions } from './regions.js';
 import { buildModel } from './data-model.js';
 import { createMap } from './map.js';
+import { createTheme } from './theme.js';
 import { createSearch } from './search.js';
 import { renderUI } from './ui.js';
 
@@ -16,6 +17,9 @@ const REGIONS_URL = new URL('../assets/regions.json', import.meta.url);
 
 async function main() {
   try {
+    // Before anything is fetched, so the toggle works while the map loads.
+    const theme = createTheme();
+
     const [regions, geojson] = await Promise.all([
       loadRegions(REGIONS_URL),
       fetchJson(new URL(config.mapDataUrl, import.meta.url), 'map data'),
@@ -24,7 +28,7 @@ async function main() {
     const model = buildModel(people, regions);
     reportWarnings(model.warnings);
 
-    const mapApi = createMap('map', { geojson, model, regions });
+    const mapApi = createMap('map', { geojson, model, regions, theme });
     renderUI({ model, regions, onFocus: (target) => mapApi.focus(target) });
     createSearch({ regions, model, onPick: (id) => mapApi.focus(regions.spread(id)) });
 

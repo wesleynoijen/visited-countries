@@ -20,10 +20,10 @@ const L = window.L;
 
 /**
  * @param {string} containerId id of the map element
- * @param {{geojson: object, regions: object, model: object}} deps
+ * @param {{geojson: object, regions: object, model: object, theme: object}} deps
  * @returns {{map: object, focus: (target: string|string[]) => void}}
  */
-export function createMap(containerId, { geojson, model, regions }) {
+export function createMap(containerId, { geojson, model, regions, theme }) {
   const cfg = config;
 
   const map = L.map(containerId, {
@@ -54,12 +54,11 @@ export function createMap(containerId, { geojson, model, regions }) {
   labelPane.style.zIndex = 450;
   labelPane.style.pointerEvents = 'none';
 
-  // ---- Basemap that follows the OS light/dark setting ------------------------
-  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  let layers = addBasemap(map, cfg, darkQuery.matches ? 'dark' : 'light');
-  darkQuery.addEventListener('change', (e) => {
+  // ---- Basemap, following whichever theme the page is in ---------------------
+  let layers = [];
+  theme.subscribe((mode) => {
     layers.forEach((layer) => map.removeLayer(layer));
-    layers = addBasemap(map, cfg, e.matches ? 'dark' : 'light');
+    layers = addBasemap(map, cfg, mode);
   });
 
   // ---- Region overlay --------------------------------------------------------

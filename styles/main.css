@@ -1,6 +1,10 @@
 /* ===========================================================================
    Visited Countries — mobile-first, Apple-inspired styling.
-   Light/dark adapt automatically to the OS setting.
+
+   Light and dark follow the OS until the reader presses the toggle in the
+   header, which sets data-theme on <html> and wins from then on. The dark
+   values are therefore written twice: once for "the OS says dark and nobody
+   overrode it", once for "dark was chosen". Keep the two blocks in step.
    =========================================================================== */
 
 :root {
@@ -15,11 +19,13 @@
   --radius-lg: 22px;
   --radius-md: 16px;
   --hairline: rgba(60, 60, 67, 0.12);
+  --error-bg: #ffefef;
+  --error-text: #b00020;
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #000000;
     --bg-elevated: #1c1c1e;
     --text: #f5f5f7;
@@ -28,7 +34,31 @@
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.5);
     --header-bg: rgba(0, 0, 0, 0.7);
     --hairline: rgba(84, 84, 88, 0.5);
+    --error-bg: #3a0d10;
+    --error-text: #ff9ea3;
   }
+}
+
+:root[data-theme='dark'] {
+    --bg: #000000;
+    --bg-elevated: #1c1c1e;
+    --text: #f5f5f7;
+    --text-secondary: #98989f;
+    --separator: rgba(84, 84, 88, 0.55);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.5);
+    --header-bg: rgba(0, 0, 0, 0.7);
+    --hairline: rgba(84, 84, 88, 0.5);
+    --error-bg: #3a0d10;
+    --error-text: #ff9ea3;
+}
+
+/* Scrollbars, form controls and the like follow an explicit choice too. */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 * {
@@ -74,8 +104,24 @@ body {
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--hairline);
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 12px;
+}
+
+/* Narrow screens: title and toggle share the first row, search takes the
+   second. Wide screens put all three side by side, toggle last. */
+.app-heading {
+  flex: 1 1 auto;
+  order: 1;
+}
+
+.theme-toggle {
+  order: 2;
+}
+
+.search {
+  order: 3;
 }
 
 .app-header h1 {
@@ -93,20 +139,81 @@ body {
 
 @media (min-width: 700px) {
   .app-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    flex-wrap: nowrap;
     gap: 24px;
   }
   .app-heading {
     flex: none;
   }
+  .search {
+    order: 2;
+    margin-left: auto;
+  }
+  .theme-toggle {
+    order: 3;
+  }
+}
+
+/* ---- Theme toggle --------------------------------------------------------- */
+.theme-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--separator);
+}
+
+.theme-toggle:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.18);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Show the icon for what pressing it does, matching the token blocks above:
+   a moon while the page is light, a sun while it is dark. */
+.theme-toggle .to-light {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .theme-toggle .to-dark {
+    display: none;
+  }
+  :root:not([data-theme='light']) .theme-toggle .to-light {
+    display: block;
+  }
+}
+
+:root[data-theme='dark'] .theme-toggle .to-dark {
+  display: none;
+}
+
+:root[data-theme='dark'] .theme-toggle .to-light {
+  display: block;
 }
 
 /* ---- Search --------------------------------------------------------------- */
 .search {
   position: relative;
-  flex: 1;
+  flex: 1 1 100%;
   max-width: 460px;
   width: 100%;
 }
@@ -591,16 +698,9 @@ body {
   margin: 16px;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  background: #ffefef;
-  color: #b00020;
+  background: var(--error-bg);
+  color: var(--error-text);
   font-size: 0.9rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .error {
-    background: #3a0d10;
-    color: #ff9ea3;
-  }
 }
 
 /* ---- Leaflet overrides ---------------------------------------------------- */

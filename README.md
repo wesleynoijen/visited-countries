@@ -8,9 +8,12 @@ It's a **static site** — no database, no backend, no build step to deploy. All
 data lives in code, so the published map only ever changes when you commit.
 Perfect for GitHub Pages.
 
-- 🗺️ **954 regions, not just countries.** Mainland Spain, the Canary Islands and
+- 🗺️ **1,003 regions, not just countries.** Mainland Spain, the Canary Islands and
   the Balearics are three separate things you can colour in — as are Hawaii,
   Corsica, the Azores, Zanzibar, Sardinia and the Galápagos.
+- 🏝️ **49 Greek islands by name.** Santorini, Mykonos, Rhodes, Corfu, Zakynthos,
+  Kos, Naxos, Paros, Lesbos, Skiathos and the rest are each their own region, so
+  a week on Rhodes colours in Rhodes.
 - 🇺🇸 **States and provinces** for the USA, Canada, Australia, Brazil, Germany,
   France, Italy, Spain, the UK, the Netherlands, Belgium, Austria, Switzerland,
   Portugal, Greece, Sweden, Norway, Poland, Russia, China, India, Argentina,
@@ -49,7 +52,7 @@ code  ES-CN
 `ES-CN` is what you need. You can also just tap any region on the map directly —
 every one of them shows its code, visited or not.
 
-**B. Search [`REGIONS.md`](REGIONS.md).** All 954 codes are listed there, grouped
+**B. Search [`REGIONS.md`](REGIONS.md).** All 1,003 codes are listed there, grouped
 by country. Press `Ctrl+F` / `Cmd+F` and search for the place or the country. Each
 row tells you the code, the name, whether it counts as mainland, and the other
 names it answers to.
@@ -131,7 +134,8 @@ only.** Anything that sits off on its own is a separate place you have to earn.
 
 So `'US'` is the contiguous states plus DC — Alaska (`US-AK`) and Hawaii
 (`US-HI`) are separate. `'PT'` is mainland Portugal, not the Azores (`PT-20`) or
-Madeira (`PT-30`).
+Madeira (`PT-30`). `'GR'` is Greece's 14 peripheries, so Santorini and Rhodes are
+yours to add by name.
 
 ### Recipes
 
@@ -141,6 +145,7 @@ Madeira (`PT-30`).
 | Only the part of a country you actually saw | `'ES-AN'` (Andalusia), `'IT-82'` (Sicily), `'US-NY'` (New York) |
 | A whole country including its islands | `'ES*'`, `'US*'`, `'PT*'` |
 | An island group on its own | `'ES-CN'`, `'PT-20'`, `'FR-COR'`, `'EC-W'` (Galápagos) |
+| A single Greek island | `'Santorini'`, `'Rhodes'`, `'Corfu'`, `'Mykonos'` — or their codes, `'GR-SANTORINI'` and friends |
 | A city you visited | the region it's in: `'FR-IDF'` for Paris, `'TR-34'` for Istanbul — or simply write `'Paris'` or `'Istanbul'`, which resolve to those regions |
 
 ### Adding another person
@@ -214,7 +219,7 @@ src/
   ui.js                  # header, stats, continent bars, legend, lists
   util.js                # small helpers (flags, name folding, dots)
 assets/
-  world-regions.geojson  # the 954 region shapes, keyed by region id
+  world-regions.geojson  # the 1,003 region shapes, keyed by region id
   regions.json           # names, countries, continents, aliases
   leaflet/               # vendored Leaflet (no CDN dependency)
 tools/
@@ -244,7 +249,7 @@ npm run build:regions  # downloads Natural Earth, rewrites the assets + REGIONS.
 ```
 
 Edit [`tools/region-rules.mjs`](tools/region-rules.mjs) first: it holds the
-split list, the merge rules, the names and the aliases. Everything else is
+split list, the merge rules, the island list, the names and the aliases. Everything else is
 worked out automatically by [`tools/build-regions.mjs`](tools/build-regions.mjs):
 
 1. Natural Earth's 4,596 admin-1 units are merged up to the level people
@@ -257,6 +262,13 @@ worked out automatically by [`tools/build-regions.mjs`](tools/build-regions.mjs)
 4. Split countries keep every unit as a region. Every other country becomes one
    region for its mainland, plus a region for each detached landmass big enough
    to be a destination of its own.
+
+There is one hand-made step on top of that. Natural Earth stops at Greece's 14
+peripheries, so Santorini and Rhodes have no code of their own. `ISLAND_REGIONS`
+names 49 Greek islands and the build carves each one out of its periphery,
+locating it by a point on the island and warning if that point ever stops
+landing inside a shape. Islands with no entry stay with their periphery, so
+`GR-L` still covers the South Aegean islands nobody asked for by name.
 
 The script prints every detached region it produced so you can eyeball the
 result, and warns loudly if a region ends up without a shape.

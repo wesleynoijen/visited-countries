@@ -41,6 +41,7 @@ import {
   DETACHED_NAMES,
   FORCE_DETACHED,
   FORCE_REGIONS,
+  ISLAND_REGIONS,
   MIN_COUNTRY_AREA_KM2,
   MIN_DETACHED_AREA_KM2,
   NEVER_SPLIT,
@@ -167,8 +168,42 @@ function buildRegions(admin1, countries, capitals) {
     console.warn(`  ! duplicate region id ${r.id} (${r.name} / ${seen.get(r.id).name})`);
   }
 
+  addIslandRegions(regions);
+
   regions.sort((a, b) => a.countryName.localeCompare(b.countryName) || a.name.localeCompare(b.name));
   return { regions, assignments };
+}
+
+/**
+ * Add the hand-picked islands from region-rules.mjs to the reference list. They
+ * inherit everything from the periphery they are carved out of, and are always
+ * detached — so `GR` stays the Greek mainland and its peripheries, and Santorini
+ * is something you add on purpose.
+ */
+function addIslandRegions(regions) {
+  for (const islands of Object.values(ISLAND_REGIONS)) {
+    for (const island of islands) {
+      const parent = regions.find((r) => r.id === island.parent);
+      if (!parent) {
+        console.warn(`  ! island ${island.id} has no parent region ${island.parent}`);
+        continue;
+      }
+      if (regions.some((r) => r.id === island.id)) {
+        console.warn(`  ! island id ${island.id} is already taken`);
+        continue;
+      }
+      regions.push({
+        id: island.id,
+        name: island.name,
+        country: parent.country,
+        countryName: parent.countryName,
+        continent: parent.continent,
+        subregion: parent.subregion,
+        mainland: false,
+        area: 0,
+      });
+    }
+  }
 }
 
 /** Merge admin-1 features into the units that become regions. */
@@ -400,11 +435,11 @@ function writeGeometry(admin1, assignments) {
   });
 
   const out = join(ROOT, 'assets', 'world-regions.geojson');
-  const built = stitch([
+  const built = carveIslands(stitch([
     { source: coarse, min: 1500 }, // km² — continents and large islands
     { source: fine, min: 10 }, //          islands
     { source: raw, min: 0 }, //            islets and microstates
-  ]);
+  ]));
   writeFileSync(out, JSON.stringify(built));
   console.log(`Wrote ${out} — ${built.features.length} features, ${sizeOf(out)}`);
   return built;
@@ -462,6 +497,84 @@ function stitch(passes) {
 
   features.sort((a, b) => a.properties.id.localeCompare(b.properties.id));
   return { type: 'FeatureCollection', features };
+}
+
+/**
+ * Move each hand-picked island's polygon out of its periphery into a region of
+ * its own. The island is located by a point taken from the built geometry, so a
+ * miss means the shapes moved and the name would land on the wrong rock — which
+ * is worth a loud warning rather than a silent guess.
+ */
+function carveIslands(collection) {
+  const byId = new Map(collection.features.map((f) => [f.properties.id, f]));
+
+  for (const islands of Object.values(ISLAND_REGIONS)) {
+    for (const island of islands) {
+      const parent = byId.get(island.parent);
+      if (!parent) {
+        console.warn(`  ! ${island.name}: no geometry for parent ${island.parent}`);
+        continue;
+      }
+
+      const polygons = polygonsOf(parent);
+      const index = findPolygon(polygons, island.at);
+      if (index < 0) {
+        console.warn(`  ! ${island.name}: no polygon at ${island.at} in ${island.parent}`);
+        continue;
+      }
+
+      const [taken] = polygons.splice(index, 1);
+      parent.geometry = polygons.length
+        ? toGeometry(polygons)
+        : null; // reported by verify()
+
+      const feature = { type: 'Feature', properties: { id: island.id }, geometry: toGeometry([taken]) };
+      collection.features.push(feature);
+      byId.set(island.id, feature);
+    }
+  }
+
+  collection.features.sort((a, b) => a.properties.id.localeCompare(b.properties.id));
+  return collection;
+}
+
+/** Which polygon holds this point: inside it, or failing that, nearest to it. */
+function findPolygon(polygons, point) {
+  for (let i = 0; i < polygons.length; i++) {
+    if (pointInRing(point, polygons[i][0])) return i;
+  }
+
+  // Simplification nudges coastlines, so a point taken from an older build can
+  // end up just offshore. Accept the nearest shape, but only if it is close.
+  let best = -1;
+  let bestDistance = 0.25; // degrees, roughly 25 km
+  polygons.forEach((polygon, i) => {
+    const [x, y] = ringCentre(polygon[0]);
+    const distance = Math.hypot(x - point[0], y - point[1]);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = i;
+    }
+  });
+  return best;
+}
+
+/** The average of a ring's vertices — good enough to tell islands apart. */
+function ringCentre(ring) {
+  let x = 0;
+  let y = 0;
+  for (let i = 0; i < ring.length - 1; i++) {
+    x += ring[i][0];
+    y += ring[i][1];
+  }
+  const n = Math.max(1, ring.length - 1);
+  return [x / n, y / n];
+}
+
+function toGeometry(polygons) {
+  return polygons.length === 1
+    ? { type: 'Polygon', coordinates: polygons[0] }
+    : { type: 'MultiPolygon', coordinates: polygons };
 }
 
 /** Every polygon of a feature, as an array of ring-arrays. */

@@ -275,3 +275,93 @@ export const MIN_COUNTRY_AREA_KM2 = 5000;
 
 /** Distance (km) below which two landmasses count as the same landmass. */
 export const CLUSTER_DISTANCE_KM = 80;
+
+// =============================================================================
+//  GREEK ISLANDS
+//
+//  Natural Earth stops at Greece's 14 peripheries, so Rhodes and Santorini are
+//  buried inside "South Aegean" with no code of their own. The islands people
+//  actually book holidays to deserve better, so each one below is carved out of
+//  its periphery into its own region.
+//
+//  `at` is a point on the island, taken from the built geometry itself, and the
+//  build warns if it ever stops landing inside a shape — that is the check that
+//  keeps a name attached to the right rock.
+//
+//  Everything not listed here stays with its periphery: `GR-L` still covers the
+//  South Aegean islands that have no entry of their own.
+// =============================================================================
+
+export const ISLAND_REGIONS = {
+  GRC: [
+    // --- Dodecanese -----------------------------------------------------------
+    { id: 'GR-RHODES', name: 'Rhodes', parent: 'GR-L', at: [27.967, 36.171], aliases: ['Rhodos', 'Rodos', 'Ródos'] },
+    { id: 'GR-KOS', name: 'Kos', parent: 'GR-L', at: [27.092, 36.789] },
+    { id: 'GR-KARPATHOS', name: 'Karpathos', parent: 'GR-L', at: [27.162, 35.6] },
+    { id: 'GR-KALYMNOS', name: 'Kalymnos', parent: 'GR-L', at: [26.965, 36.998] },
+    { id: 'GR-LEROS', name: 'Leros', parent: 'GR-L', at: [26.833, 37.151] },
+    { id: 'GR-PATMOS', name: 'Patmos', parent: 'GR-L', at: [26.556, 37.327] },
+    { id: 'GR-SYMI', name: 'Symi', parent: 'GR-L', at: [27.83, 36.588], aliases: ['Simi'] },
+    { id: 'GR-TILOS', name: 'Tilos', parent: 'GR-L', at: [27.365, 36.43] },
+    { id: 'GR-NISYROS', name: 'Nisyros', parent: 'GR-L', at: [27.167, 36.587] },
+    { id: 'GR-ASTYPALAIA', name: 'Astypalaia', parent: 'GR-L', at: [26.358, 36.576] },
+
+    // --- Cyclades -------------------------------------------------------------
+    { id: 'GR-SANTORINI', name: 'Santorini', parent: 'GR-L', at: [25.431, 36.412], aliases: ['Thira', 'Thera', 'Fira'] },
+    { id: 'GR-MYKONOS', name: 'Mykonos', parent: 'GR-L', at: [25.372, 37.462] },
+    { id: 'GR-NAXOS', name: 'Naxos', parent: 'GR-L', at: [25.472, 37.06] },
+    { id: 'GR-PAROS', name: 'Paros', parent: 'GR-L', at: [25.214, 37.071] },
+    { id: 'GR-ANTIPAROS', name: 'Antiparos', parent: 'GR-L', at: [25.058, 37.001] },
+    { id: 'GR-IOS', name: 'Ios', parent: 'GR-L', at: [25.334, 36.718] },
+    { id: 'GR-MILOS', name: 'Milos', parent: 'GR-L', at: [24.429, 36.717] },
+    { id: 'GR-SIFNOS', name: 'Sifnos', parent: 'GR-L', at: [24.696, 36.991] },
+    { id: 'GR-SERIFOS', name: 'Serifos', parent: 'GR-L', at: [24.49, 37.164] },
+    { id: 'GR-FOLEGANDROS', name: 'Folegandros', parent: 'GR-L', at: [24.908, 36.628] },
+    { id: 'GR-SYROS', name: 'Syros', parent: 'GR-L', at: [24.919, 37.44], aliases: ['Ermoupoli'] },
+    { id: 'GR-TINOS', name: 'Tinos', parent: 'GR-L', at: [25.115, 37.622] },
+    { id: 'GR-ANDROS', name: 'Andros', parent: 'GR-L', at: [24.855, 37.86] },
+    { id: 'GR-AMORGOS', name: 'Amorgos', parent: 'GR-L', at: [25.883, 36.838] },
+    { id: 'GR-KEA', name: 'Kea', parent: 'GR-L', at: [24.329, 37.616], aliases: ['Tzia'] },
+    { id: 'GR-KYTHNOS', name: 'Kythnos', parent: 'GR-L', at: [24.427, 37.404] },
+
+    // --- Ionian ---------------------------------------------------------------
+    { id: 'GR-CORFU', name: 'Corfu', parent: 'GR-F', at: [19.882, 39.594], aliases: ['Kerkyra', 'Korfoe'] },
+    { id: 'GR-KEFALONIA', name: 'Kefalonia', parent: 'GR-F', at: [20.553, 38.229], aliases: ['Cephalonia', 'Kefallinia'] },
+    { id: 'GR-ZAKYNTHOS', name: 'Zakynthos', parent: 'GR-F', at: [20.801, 37.781], aliases: ['Zante'] },
+    { id: 'GR-LEFKADA', name: 'Lefkada', parent: 'GR-F', at: [20.647, 38.7], aliases: ['Lefkas'] },
+    { id: 'GR-ITHACA', name: 'Ithaca', parent: 'GR-F', at: [20.685, 38.411], aliases: ['Ithaki'] },
+    { id: 'GR-PAXOS', name: 'Paxos', parent: 'GR-F', at: [20.166, 39.206], aliases: ['Paxi'] },
+
+    // --- North Aegean ---------------------------------------------------------
+    { id: 'GR-LESBOS', name: 'Lesbos', parent: 'GR-K', at: [26.226, 39.161], aliases: ['Lesvos', 'Mytilene'] },
+    { id: 'GR-CHIOS', name: 'Chios', parent: 'GR-K', at: [26.023, 38.386] },
+    { id: 'GR-SAMOS', name: 'Samos', parent: 'GR-K', at: [26.81, 37.729] },
+    { id: 'GR-IKARIA', name: 'Ikaria', parent: 'GR-K', at: [26.162, 37.6] },
+    { id: 'GR-LIMNOS', name: 'Limnos', parent: 'GR-K', at: [25.253, 39.91], aliases: ['Lemnos'] },
+
+    // --- Sporades and Skyros --------------------------------------------------
+    { id: 'GR-SKIATHOS', name: 'Skiathos', parent: 'GR-E', at: [23.459, 39.174] },
+    { id: 'GR-SKOPELOS', name: 'Skopelos', parent: 'GR-E', at: [23.687, 39.138] },
+    { id: 'GR-ALONNISOS', name: 'Alonnisos', parent: 'GR-E', at: [23.909, 39.206] },
+    { id: 'GR-SKYROS', name: 'Skyros', parent: 'GR-H', at: [24.553, 38.859] },
+
+    // --- Evia and the Saronic islands ----------------------------------------
+    { id: 'GR-EVIA', name: 'Evia', parent: 'GR-H', at: [24.011, 38.435], aliases: ['Euboea', 'Evvoia'] },
+    { id: 'GR-AEGINA', name: 'Aegina', parent: 'GR-A1', at: [23.49, 37.726], aliases: ['Egina'] },
+    { id: 'GR-HYDRA', name: 'Hydra', parent: 'GR-A1', at: [23.495, 37.344], aliases: ['Ydra'] },
+    { id: 'GR-SPETSES', name: 'Spetses', parent: 'GR-A1', at: [23.139, 37.262] },
+    { id: 'GR-POROS', name: 'Poros', parent: 'GR-A1', at: [23.491, 37.528] },
+    { id: 'GR-KYTHIRA', name: 'Kythira', parent: 'GR-A1', at: [22.986, 36.253], aliases: ['Cythera'] },
+
+    // --- Thracian Sea ---------------------------------------------------------
+    { id: 'GR-THASOS', name: 'Thasos', parent: 'GR-A', at: [24.683, 40.686], aliases: ['Thassos'] },
+    { id: 'GR-SAMOTHRACE', name: 'Samothrace', parent: 'GR-A', at: [25.585, 40.456], aliases: ['Samothraki'] },
+  ],
+};
+
+// Island nicknames join the main alias table.
+for (const islands of Object.values(ISLAND_REGIONS)) {
+  for (const island of islands) {
+    if (island.aliases) ALIASES[island.id] = [...(ALIASES[island.id] || []), ...island.aliases];
+  }
+}

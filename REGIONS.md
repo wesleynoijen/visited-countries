@@ -11,7 +11,7 @@ A bare country code means **the mainland only**: `ES` is mainland Spain, and
 the Canaries, Balearics, Ceuta and Melilla stay uncoloured until you add them.
 Write `ES*` when you want the whole country, islands included.
 
-954 regions across 251 countries and territories.
+1003 regions across 251 countries and territories.
 
 ## Afghanistan
 
@@ -655,20 +655,69 @@ Write `ES*` when you want the whole country, islands included.
 
 | Code | Region | Mainland | Also answers to |
 | --- | --- | --- | --- |
+| `GR-AEGINA` | Aegina | no | Egina |
+| `GR-ALONNISOS` | Alonnisos | no |  |
+| `GR-AMORGOS` | Amorgos | no |  |
+| `GR-ANDROS` | Andros | no |  |
+| `GR-ANTIPAROS` | Antiparos | no |  |
+| `GR-ASTYPALAIA` | Astypalaia | no |  |
 | `GR-A1` | Attica | yes | Athene |
 | `GR-H` | Central Greece | yes |  |
 | `GR-B` | Centre Macedonia | yes |  |
+| `GR-CHIOS` | Chios | no |  |
+| `GR-CORFU` | Corfu | no | Kerkyra, Korfoe |
 | `GR-M` | Crete | yes | Crete, Kriti, Heraklion, Kreta |
 | `GR-A` | East Macedonia and Thrace | yes |  |
 | `GR-D` | Epirus | yes |  |
+| `GR-EVIA` | Evia | no | Euboea, Evvoia |
+| `GR-FOLEGANDROS` | Folegandros | no |  |
+| `GR-HYDRA` | Hydra | no | Ydra |
+| `GR-IKARIA` | Ikaria | no |  |
 | `GR-F` | Ionian Islands | yes |  |
+| `GR-IOS` | Ios | no |  |
+| `GR-ITHACA` | Ithaca | no | Ithaki |
+| `GR-KALYMNOS` | Kalymnos | no |  |
+| `GR-KARPATHOS` | Karpathos | no |  |
+| `GR-KEA` | Kea | no | Tzia |
+| `GR-KEFALONIA` | Kefalonia | no | Cephalonia, Kefallinia |
+| `GR-KOS` | Kos | no |  |
+| `GR-KYTHIRA` | Kythira | no | Cythera |
+| `GR-KYTHNOS` | Kythnos | no |  |
+| `GR-LEFKADA` | Lefkada | no | Lefkas |
+| `GR-LEROS` | Leros | no |  |
+| `GR-LESBOS` | Lesbos | no | Lesvos, Mytilene |
+| `GR-LIMNOS` | Limnos | no | Lemnos |
+| `GR-MILOS` | Milos | no |  |
 | `GR-69` | Mount Athos | yes |  |
+| `GR-MYKONOS` | Mykonos | no |  |
+| `GR-NAXOS` | Naxos | no |  |
+| `GR-NISYROS` | Nisyros | no |  |
 | `GR-K` | North Aegean | yes |  |
+| `GR-PAROS` | Paros | no |  |
+| `GR-PATMOS` | Patmos | no |  |
+| `GR-PAXOS` | Paxos | no | Paxi |
 | `GR-J` | Peloponnese | yes |  |
+| `GR-POROS` | Poros | no |  |
+| `GR-RHODES` | Rhodes | no | Rhodos, Rodos, Ródos |
+| `GR-SAMOS` | Samos | no |  |
+| `GR-SAMOTHRACE` | Samothrace | no | Samothraki |
+| `GR-SANTORINI` | Santorini | no | Thira, Thera, Fira |
+| `GR-SERIFOS` | Serifos | no |  |
+| `GR-SIFNOS` | Sifnos | no |  |
+| `GR-SKIATHOS` | Skiathos | no |  |
+| `GR-SKOPELOS` | Skopelos | no |  |
+| `GR-SKYROS` | Skyros | no |  |
 | `GR-L` | South Aegean | yes | Zuid-Egeïsche Eilanden, Rhodos, Santorini, Mykonos, Kos |
+| `GR-SPETSES` | Spetses | no |  |
+| `GR-SYMI` | Symi | no | Simi |
+| `GR-SYROS` | Syros | no | Ermoupoli |
+| `GR-THASOS` | Thasos | no | Thassos |
 | `GR-E` | Thessalia | yes |  |
+| `GR-TILOS` | Tilos | no |  |
+| `GR-TINOS` | Tinos | no |  |
 | `GR-G` | West Greece | yes |  |
 | `GR-C` | West Macedonia | yes |  |
+| `GR-ZAKYNTHOS` | Zakynthos | no | Zante |
 
 ## Greenland
 

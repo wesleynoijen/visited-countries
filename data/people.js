@@ -76,8 +76,9 @@ export const people = [
       'PL',
       'CZ',
       'BG',
-      'GR', // Greece — its islands chain back to the mainland, so this covers
-      //      them too; use 'GR-M' (Crete) or 'GR-L' (South Aegean) to be precise
+      'GR', // the Greek mainland and its 14 peripheries. The 49 named islands
+      //      are separate now, so add the ones you have been to by name:
+      //      'Crete', 'Santorini', 'Rhodes', 'Corfu', 'Mykonos', 'Kos'…
       'TR',
       'AE',
     ],

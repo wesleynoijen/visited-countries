@@ -69,28 +69,27 @@ export const people = [
     name: 'Wesley',
     color: COLORS.blue,
     countries: [
-      // A bare country code covers that country's mainland. Narrow any of
-      // these down whenever you feel like it — 'ES' could become 'ES-CT' and
-      // 'ES-AN' if Catalonia and Andalusia are the parts you actually saw.
-      'NL', // mainland Netherlands
-      'BE',
-      'DE',
-      'FR', // mainland France; add 'FR-COR' for Corsica
-      'ES', // mainland Spain; add 'Tenerife', 'Ibiza', 'Mallorca'… by name, or
-      //      'ES-CN' / 'ES-IB' for a whole archipelago at once
-      'PL',
-      'CZ',
-      'BG',
-      'GR', // the Greek mainland and its 14 peripheries. The 49 named islands
-      //      are separate now, so add the ones you have been to by name:
-      //      'Crete', 'Santorini', 'Rhodes', 'Corfu', 'Mykonos', 'Kos'…
-      'TR',
-      'AE',
+      'BE', //          België
+      'BG', //          Bulgarije
+      'AE', //          Dubai — the Emirates are one region, so this is the whole country
+      'DE', //          Duitsland
+      'FR', //          Frankrijk (mainland; 'FR-COR' would add Corsica)
+      'ES-IBIZA', //    Ibiza
+      'NL', //          Nederland
+      'PL', //          Polen
+      'ES', //          Spanje — the mainland only, which is why Ibiza and Tenerife
+      //                are listed separately
+      'ES-TENERIFE', // Tenerife
+      'CZ', //          Tsjechië
+      'TR', //          Turkije — all 81 provinces. Narrow it down whenever you
+      //                like: 'TR-34' is Istanbul, 'TR-07' Antalya
+      'GR-RHODES', //   Rhodos — only the island; the Greek mainland stays grey
     ],
   },
   {
     name: 'Madelon',
     color: COLORS.green,
-    countries: ['NL'],
+    // Nothing yet — add codes here the same way.
+    countries: [],
   },
 ];

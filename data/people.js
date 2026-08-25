@@ -32,8 +32,9 @@
 //  Australia, Brazil, Germany, France, Italy, Spain, the UK, the Netherlands,
 //  Belgium, Austria, Switzerland, Portugal, Greece, Sweden, Norway, Poland,
 //  Russia, China, India, Argentina, Mexico, South Africa, Indonesia, Japan,
-//  Turkey and Kazakhstan. Everywhere else is one region per country, plus its
-//  detached islands (Galápagos, Zanzibar, Azores…).
+//  Turkey, Kazakhstan and the United Arab Emirates — so 'AE-DU' is Dubai on
+//  its own. Everywhere else is one region per country, plus its detached
+//  islands (Galápagos, Zanzibar, Azores…).
 //
 //  EVERY VALID CODE is listed in REGIONS.md — search that file, or use the
 //  search box on the map itself and tap a region to see its code.
@@ -71,7 +72,7 @@ export const people = [
     countries: [
       'BE', //          België
       'BG', //          Bulgarije
-      'AE', //          Dubai — the Emirates are one region, so this is the whole country
+      'AE-DU', //       Dubai — the emirate only; write 'AE' for all seven
       'DE', //          Duitsland
       'FR', //          Frankrijk (mainland; 'FR-COR' would add Corsica)
       'ES-IBIZA', //    Ibiza

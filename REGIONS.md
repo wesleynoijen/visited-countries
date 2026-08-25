@@ -15,7 +15,7 @@ Some regions have their big islands carved out into regions of their own.
 Their code still covers the whole group, so `ES-CN` is all of the Canaries
 while `ES-TENERIFE` is only Tenerife.
 
-1014 regions across 251 countries and territories.
+1021 regions across 251 countries and territories.
 
 ## Afghanistan
 
@@ -2135,7 +2135,14 @@ while `ES-TENERIFE` is only Tenerife.
 
 | Code | Region | Mainland | Also answers to |
 | --- | --- | --- | --- |
-| `AE` | United Arab Emirates | yes | Dubai, Abu Dhabi |
+| `AE-AZ` | Abu Dhabi | yes | Abu Dabi |
+| `AE-AJ` | Ajman | yes |  |
+| `AE-DU` | Dubai | yes | Dubay, Dubai Marina, Burj Khalifa |
+| `AE-FU` | Fujairah | yes | Fujayrah |
+| `AE-NEUTRAL` | Neutral Zone | yes |  |
+| `AE-RK` | Ras Al Khaimah | yes | Ras Al Khaymah, RAK |
+| `AE-SH` | Sharjah | yes |  |
+| `AE-UQ` | Umm Al Quwain | yes | Umm Al Qaywayn |
 
 ## United Kingdom
 

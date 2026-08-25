@@ -8,7 +8,7 @@ It's a **static site** — no database, no backend, no build step to deploy. All
 data lives in code, so the published map only ever changes when you commit.
 Perfect for GitHub Pages.
 
-- 🗺️ **1,014 regions, not just countries.** Mainland Spain, Tenerife and Ibiza
+- 🗺️ **1,021 regions, not just countries.** Mainland Spain, Tenerife and Ibiza
   are three separate things you can colour in — as are Hawaii, Corsica, the
   Azores, Zanzibar, Sardinia and the Galápagos.
 - 🏝️ **Holiday islands by name.** All 49 Greek islands worth naming — Santorini,
@@ -18,7 +18,8 @@ Perfect for GitHub Pages.
 - 🇺🇸 **States and provinces** for the USA, Canada, Australia, Brazil, Germany,
   France, Italy, Spain, the UK, the Netherlands, Belgium, Austria, Switzerland,
   Portugal, Greece, Sweden, Norway, Poland, Russia, China, India, Argentina,
-  Mexico, South Africa, Indonesia, Japan, Turkey and Kazakhstan.
+  Mexico, South Africa, Indonesia, Japan, Turkey, Kazakhstan and the United
+  Arab Emirates — so Dubai is its own region.
 - 🔎 **Search** any of them by name, nickname or code — in English or Dutch.
 - 📊 Per-continent progress bars, plus a list of where **everyone** has been
   and one of everywhere still missing **somebody**. All three count countries,
@@ -57,7 +58,7 @@ code  ES-TENERIFE
 `ES-TENERIFE` is what you need. You can also just tap any region on the map directly —
 every one of them shows its code, visited or not.
 
-**B. Search [`REGIONS.md`](REGIONS.md).** All 1,014 codes are listed there, grouped
+**B. Search [`REGIONS.md`](REGIONS.md).** All 1,021 codes are listed there, grouped
 by country. Press `Ctrl+F` / `Cmd+F` and search for the place or the country. Each
 row tells you the code, the name, whether it counts as mainland, and the other
 names it answers to.
@@ -232,7 +233,7 @@ src/
   ui.js                  # header, stats, continent bars, legend, lists
   util.js                # small helpers (flags, name folding, dots)
 assets/
-  world-regions.geojson  # the 1,014 region shapes, keyed by region id
+  world-regions.geojson  # the 1,021 region shapes, keyed by region id
   regions.json           # names, countries, continents, aliases
   leaflet/               # vendored Leaflet (no CDN dependency)
 tools/

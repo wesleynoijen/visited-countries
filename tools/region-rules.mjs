@@ -19,6 +19,8 @@ export const SPLIT_COUNTRIES = new Set([
   'SWE', 'NOR', 'POL',
   // Other large countries
   'RUS', 'CHN', 'IND', 'ARG', 'MEX', 'ZAF', 'IDN', 'JPN', 'TUR', 'KAZ',
+  // Not large, but Dubai is a destination in its own right
+  'ARE',
 ]);
 
 /**
@@ -31,6 +33,9 @@ export const AGGREGATE_BY = {
   ITA: 'region', // 110 provinces  -> 20 regions
   FRA: 'region', // 101 departments -> 18 régions (incl. overseas)
   GBR: 'geonunit', // 232 districts -> England / Scotland / Wales / N. Ireland
+  // Nothing to merge here, but grouping by name lets the emirates be listed
+  // under the spellings people actually use — 'Dubai', not 'Dubay'.
+  ARE: 'name',
 };
 
 /**
@@ -59,6 +64,18 @@ export const AGGREGATE_META = {
   'ESP|Murcia': ['ES-MC', 'Murcia'],
   'ESP|País Vasco': ['ES-PV', 'Basque Country'],
   'ESP|Valenciana': ['ES-VC', 'Valencia'],
+
+  // --- United Arab Emirates: emirates -------------------------------------------
+  'ARE|Abu Dhabi': ['AE-AZ', 'Abu Dhabi'],
+  'ARE|Ajman': ['AE-AJ', 'Ajman'],
+  'ARE|Dubay': ['AE-DU', 'Dubai'],
+  'ARE|Fujayrah': ['AE-FU', 'Fujairah'],
+  'ARE|Ras Al Khaymah': ['AE-RK', 'Ras Al Khaimah'],
+  'ARE|Sharjah': ['AE-SH', 'Sharjah'],
+  'ARE|Umm Al Qaywayn': ['AE-UQ', 'Umm Al Quwain'],
+  // Two small enclaves on the Omani border that Natural Earth attributes to no
+  // emirate. Left as they are rather than guessing which one they belong to.
+  'ARE|Neutral Zone': ['AE-NEUTRAL', 'Neutral Zone'],
 
   // --- Italy: regions ----------------------------------------------------------
   'ITA|Abruzzo': ['IT-65', 'Abruzzo'],
@@ -186,7 +203,11 @@ export const ALIASES = {
   'JP-13': ['Tokyo'],
   'ID-BA': ['Bali'],
   'TH': ['Bangkok', 'Phuket'],
-  'AE': ['Dubai', 'Abu Dhabi'],
+  'AE-DU': ['Dubay', 'Dubai Marina', 'Burj Khalifa'],
+  'AE-AZ': ['Abu Dabi'],
+  'AE-RK': ['Ras Al Khaymah', 'RAK'],
+  'AE-UQ': ['Umm Al Qaywayn'],
+  'AE-FU': ['Fujayrah'],
 };
 
 /**

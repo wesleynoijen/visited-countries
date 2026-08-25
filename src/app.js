@@ -10,6 +10,7 @@ import { loadRegions } from './regions.js';
 import { buildModel } from './data-model.js';
 import { createMap } from './map.js';
 import { createTheme } from './theme.js';
+import { createExport } from './export.js';
 import { createSearch } from './search.js';
 import { renderUI } from './ui.js';
 
@@ -31,6 +32,7 @@ async function main() {
     const mapApi = createMap('map', { geojson, model, regions, theme });
     renderUI({ model, onFocus: (target) => mapApi.focus(target) });
     createSearch({ regions, model, onPick: (id) => mapApi.focus(regions.spread(id)) });
+    createExport({ model, regions });
 
     document.body.classList.add('is-ready');
   } catch (err) {

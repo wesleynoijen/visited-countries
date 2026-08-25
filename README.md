@@ -26,6 +26,8 @@ Perfect for GitHub Pages.
   not regions, so a trip through the Netherlands is one row and not twelve
   provinces.
 - 🎨 Per-person colours; **diagonal stripes** where people overlap.
+- 📄 **Export as text** — one button in the footer writes the whole page to a
+  plain `.txt` file you can paste anywhere.
 - 📱 Mobile-first, Apple-inspired design; responsive two-column layout on
   larger screens.
 - 🌓 Light and dark. Follows your system setting, with a toggle in the header
@@ -229,6 +231,7 @@ src/
   map.js                 # Leaflet map, region fills, hover, popups
   search.js              # the search box
   theme.js               # light/dark, the toggle and what it remembers
+  export.js              # the "Export as text" download
   patterns.js            # SVG diagonal-stripe patterns for shared regions
   ui.js                  # header, stats, continent bars, legend, lists
   util.js                # small helpers (flags, name folding, dots)

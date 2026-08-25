@@ -90,7 +90,19 @@ export const people = [
   {
     name: 'Madelon',
     color: COLORS.green,
-    // Nothing yet — add codes here the same way.
-    countries: [],
+    countries: [
+      'NL', //          Nederland
+      'BE', //          België
+      'DE', //          Duitsland
+      'AT', //          Oostenrijk
+      'HR', //          Kroatië
+      'IT', //          Italië — 19 of the 20 regions; Sardinia is 'IT-88'
+      'HU', //          Hongarije
+      'ES-IBIZA', //    Ibiza
+      'ES', //          Spanje — the mainland only, hence Ibiza on its own line
+      'TR', //          Turkije — all 81 provinces; 'TR-34' would be Istanbul
+      'GR-RHODES', //   Rhodos — only the island
+      'AE-DU', //       Dubai — the emirate only
+    ],
   },
 ];

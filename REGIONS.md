@@ -941,7 +941,7 @@ while `ES-TENERIFE` is only Tenerife.
 | `IT-67` | Molise | yes |  |
 | `IT-21` | Piedmont | yes | Piemonte |
 | `IT-88` | Sardinia | no | Sardegna, Sardinië |
-| `IT-82` | Sicily | yes | Sicilia, Sicilië |
+| `IT-82` | Sicily | no | Sicilia, Sicilië |
 | `IT-32` | Trentino-South Tyrol | yes |  |
 | `IT-52` | Tuscany | yes | Toscana, Florence, Toscane |
 | `IT-55` | Umbria | yes |  |

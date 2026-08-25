@@ -282,9 +282,11 @@ export const ARCHIPELAGO_COUNTRIES = new Set([
 /**
  * Regions that always count as away-from-the-mainland, whatever the distance
  * says. Ceuta is a 14 km ferry ride from Spain but it is on the African
- * continent, so `ES` should not silently include it.
+ * continent, so `ES` should not silently include it. Sicily is three
+ * kilometres off the toe of Italy — close enough for the clustering to call it
+ * one landmass, far enough that a week there is not a week in Italy.
  */
-export const FORCE_DETACHED = new Set(['ES-CE']);
+export const FORCE_DETACHED = new Set(['ES-CE', 'IT-82']);
 
 /** Minimum land area (km²) for a detached landmass to become its own region. */
 export const MIN_DETACHED_AREA_KM2 = 120;

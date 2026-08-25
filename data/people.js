@@ -96,7 +96,8 @@ export const people = [
       'DE', //          Duitsland
       'AT', //          Oostenrijk
       'HR', //          Kroatië
-      'IT', //          Italië — 19 of the 20 regions; Sardinia is 'IT-88'
+      'IT', //          Italië — the mainland's 18 regions. Sicily is 'IT-82',
+      //                Sardinia 'IT-88'
       'HU', //          Hongarije
       'ES-IBIZA', //    Ibiza
       'ES', //          Spanje — the mainland only, hence Ibiza on its own line

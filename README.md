@@ -10,7 +10,7 @@ Perfect for GitHub Pages.
 
 - 🗺️ **1,021 regions, not just countries.** Mainland Spain, Tenerife and Ibiza
   are three separate things you can colour in — as are Hawaii, Corsica, the
-  Azores, Zanzibar, Sardinia and the Galápagos.
+  Azores, Zanzibar, Sicily, Sardinia and the Galápagos.
 - 🏝️ **Holiday islands by name.** All 49 Greek islands worth naming — Santorini,
   Mykonos, Rhodes, Corfu, Zakynthos, Kos — plus the seven Canaries and the four
   Balearics, each its own region. A week on Ibiza colours in Ibiza and nothing
@@ -144,7 +144,8 @@ only.** Anything that sits off on its own is a separate place you have to earn.
 So `'US'` is the contiguous states plus DC — Alaska (`US-AK`) and Hawaii
 (`US-HI`) are separate. `'PT'` is mainland Portugal, not the Azores (`PT-20`) or
 Madeira (`PT-30`). `'GR'` is Greece's 14 peripheries, so Santorini and Rhodes are
-yours to add by name.
+yours to add by name. `'IT'` is Italy without Sicily (`'IT-82'`) or Sardinia
+(`'IT-88'`).
 
 A handful of codes cover a **group**: the ones with named islands carved out of
 them. `'ES-CN'` is all of the Canaries, `'ES-IB'` all of the Balearics, `'GR-L'`
@@ -156,7 +157,7 @@ name always means that island alone.
 | What you want | What you write |
 | --- | --- |
 | A country that isn't split up — Bulgaria, Thailand, the UAE | `'BG'`, `'TH'`, `'AE'` |
-| Only the part of a country you actually saw | `'ES-AN'` (Andalusia), `'IT-82'` (Sicily), `'US-NY'` (New York) |
+| Only the part of a country you actually saw | `'ES-AN'` (Andalusia), `'IT-21'` (Piedmont), `'US-NY'` (New York) |
 | A whole country including its islands | `'ES*'`, `'US*'`, `'PT*'` |
 | A whole island group | `'ES-CN'` (all the Canaries), `'ES-IB'` (all the Balearics), `'PT-20'`, `'FR-COR'`, `'EC-W'` (Galápagos) |
 | One island of a group | `'Tenerife'`, `'Ibiza'`, `'Mallorca'`, `'Lanzarote'` — or their codes, `'ES-TENERIFE'` and friends |
